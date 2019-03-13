@@ -1,0 +1,198 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>转账</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../../../css/commom.css"/>
+		
+		<script src="../../../js/mui.min.js"></script>
+		<script src="../../../js/jquery-2.1.0.js"></script>
+		<script src="../../../js/rem.js"></script>
+		<script src="../../../js/ajax.js"></script>
+		<script src="../../../js/public.js"></script>
+		
+		<style>
+			.mui-content,body{
+				background: #fff;
+			}
+			.mui-content>div{
+				padding: 1rem;
+			}
+			.form-view{
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				
+			}
+			.form-view>span{
+				color: #919191;
+				font-size: 0.75rem;
+				width: 3rem;
+			}
+			.form-view>div{
+				flex: 1;
+			}
+			.form-view>div>input{
+				border-bottom:1px solid #EAEAEA;
+		
+			}
+			input{
+				font-size: 0.7rem !important;
+			}
+			.inpH{
+				height: 2rem;
+				border: none;
+			}
+			.form-yes{
+				background:#AB956D;
+				color:#fff;
+				border-radius:1rem;
+				line-height:2rem;
+				font-size:0.75rem;
+				text-align: center;
+				margin:5rem 2rem 0;
+		
+			}
+			.myMoney{
+				
+				color: #AB956D;
+				line-height: 2rem;
+				font-weight: 600;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">转账</h1>
+		</header>
+		<div class="mui-content">
+			<div>
+				<div class="form-view" style="margin-bottom: 1rem;">
+					<span class="" style="width: auto;">收款方手机号</span>
+					<div style="width: calc(100% - 92px)">
+						<input class="phone" type='text' maxlength="11"  style="width:100%;padding-right:10px;float: left;"  placeholder="" />
+					</div>
+				</div>
+				
+				<div class="form-view">
+					<span class="">当前余额</span>
+					<div>
+						<span style="margin-left: 0.5rem; color: #AB956D;line-height: 40px;font-weight: 600;"><i class='myMoney'></i>元</span>
+					</div>
+				</div>
+				
+				<div class="form-view" style="margin-bottom: 1rem;">
+					<span class="">转账金额</span>
+					<div>
+						<input class='money-zhuan' type='number'  style="width: calc(100% - 0.7rem);padding-right:0.5rem;float: left;text-align: right;color: #AB956D;font-weight: 600;"  placeholder="" />
+						<span style="color: #AB956D;line-height: 2.2rem;font-weight: 600;float: left;text-align: right;width: 0.7rem;">元</span>
+					</div>
+				</div>
+				<div class="form-view" style="margin-bottom: 1rem;">
+					<span class="">备注</span>
+					<div>
+						<input class='inpH bb'  name="bb" style="width: 100%;padding-right:10px;float: left;text-align: left;"  placeholder="(选填)" />
+					</div>
+				</div>
+				<div class="form-view">
+					<span class="">验证码</span>
+					<div>
+						<input class='inpH yzm' maxlength="6" readonly name="yzm" style="width: calc(100% - 4rem);float: left;"  placeholder="" />
+						<span class='getYzm yzmText'   style="color: #AB956D;font-weight: 600;font-size:0.7rem;float: left;width:4rem;line-height: 2rem;">获取验证码</span>
+					</div>
+				</div>
+						
+				<div class="form-yes">发起转账</div>
+			</div>
+			
+	
+		
+		
+	
+		</div>
+		<script type="text/javascript">
+			mui.init()
+			document.addEventListener('plusready',function(){
+				var self = plus.webview.currentWebview();
+				$('.myMoney').html(self.myMoney)
+				
+				$('.money-zhuan').on('input',function(){
+					var v = Number($(this).val());
+					if(v > self.myMoney){
+						$(this).val(self.myMoney);
+					}else if(v < 1){
+						$(this).val('');
+					}
+				});
+				
+				var timer = null,time=61;
+				mui('body').on('tap', '.getYzm', function(e) {
+					$('input').blur()
+					ajaxGet(sendYzmData,{mobile:userInfo.mobile},function(res){
+						if(res.errno==0){
+							mui.toast('验证码已发送')
+							$(".yzm").removeAttr("readOnly");
+							$(this).removeClass('getYzm')
+							//获取验证码
+							timer = setInterval(function () {
+							  time--;
+							  $('.yzmText').html(time+'秒')
+							  if (time <= 0) {
+								$('.yzmText').addClass('getYzm')
+								clearInterval(timer)
+								 $('.yzmText').html('重新发送')
+								 time=61
+							  }
+							}, 1000)
+						}
+					})
+				})
+				.on('tap', '.form-yes', function(e) {
+					$('input').blur()
+					if(!$('.phone').val()){
+						mui.toast('请输入收款方手机号')
+					}else if(isPhone($('.phone').val())==false){
+						
+					}else if(!$('.money-zhuan').val()){
+						mui.toast('请输入转账金额')
+					}else if(Number($('.money-zhuan').val())<10){
+						mui.toast('转账金额最低10元')
+					}
+					else if(!$('.yzm').val()){
+						mui.toast('请输入验证码')
+					}
+					else{
+						ajaxGet(zhuan,{
+							userId:userInfo.userid,
+							money:$('.money-zhuan').val(),
+							toPhone:$('.phone').val(),
+							docx:$('.bb').val(),
+							phone:userInfo.mobile,
+							validcode:$('.yzm').val()
+						},function(res){
+							console.log(res)
+							if(res.errno == 0){
+								 mui.alert('操作成功', '温馨提示', function() {
+									var self=plus.webview.currentWebview();          //获取当前窗口的WebviewObject对象，即B  
+									var selfParent=self.opener();                           //获取当前窗口的创建者，即A  
+									selfParent.evalJS("getMoney()");        //执行父窗口中的方法  A中的showAG方法  
+									self.close();//关闭B  
+								},'div');
+							}else{
+								mui.toast(res.errmsg)
+							}
+						})
+					}
+				})
+			})
+		</script>
+		
+		
+	</body>
+
+</html>

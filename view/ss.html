@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+	<meta charset="UTF-8">
+
+	<head>
+
+		<script src="../js/jquery-2.1.0.js"></script>
+		<script>
+			$(document).ready(function() {
+				confirm(111,111);
+				let dis = true;
+
+				$(".btn-change").click(function() {
+					var $this = $('.btn-change');
+					if($(this).hasClass('btn-change')){
+						$(this).removeClass('btn-change')
+						$("#p1").css("color", "red").slideUp(2000).slideDown(2000);
+						setTimeout(function(){
+							alert('2222')
+							$this.addClass('btn-change')
+						},4000)
+					}
+				})
+				
+				var [x1,x2,x3] = [1,2,3]
+				console.log(x2)
+				
+				function show(name="jack",sex="boy"){
+				    console.log(name+" is a "+sex+"!");
+				}
+				show();                                  //jack is a boy!
+				show('judy');                            //judy is a boy!
+				show('judy','girl');                     //judy is a girl!
+				
+//				var sz = v=>v;
+				var sz = (v) => (v);
+				var obj = [
+					{
+						name:'sz',
+						age:'12'
+					},
+					{
+						name:'szz',
+						age:'122'
+					},
+				]
+				console.log(sz(...[obj][0]))
+				console.log(...[obj])
+				var result=[];
+				var s=[22,3,2,0,11,9,8,7,6,5,4,3];
+				s.map((item)=>{
+					if(item<5){
+						result.push(item)
+					}
+					result = Array.from(new Set(result))
+					return 
+				})
+				
+//				for(var i=0; i<s.length; i++){
+//					if(s[i]<5){
+//						result.push(s[i])
+//					}
+//				}
+				console.log(result)
+			})
+
+		</script>
+	</head>
+
+	<body>
+
+		<p id="p1">jQuery 乐趣十足！</p>
+		<button class="btn-change">点击这里</button>
+
+	</body>
+
+</html>

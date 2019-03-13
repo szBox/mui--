@@ -1,0 +1,58 @@
+{
+  "index.html": {
+    "resources": [
+      "view/sub1.html",
+      "view/index1/sub1.html"
+    ],
+    "refer": [
+      "view/sub4.html",
+      "view/sub1.html",
+      "view/sub3.html",
+      "view/sub2.html",
+      "view/index3/sub3.html",
+      "view/index2/sub2.html",
+      "view/index4/sub4.html",
+      "view/index1/sub1.html",
+      "login/login.html"
+    ]
+  },
+  "view/sub1.html": {
+    "refer": [
+      "view/sub1_chat.html"
+    ],
+    "resources": []
+  },
+  "view/index1/sub1.html": {
+    "refer": [
+      "view/index1/sub1_chat.html"
+    ],
+    "resources": []
+  },
+  "login/login.html": {
+    "refer": [
+      "index.html"
+    ],
+    "resources": []
+  },
+  "login.html": {
+    "refer": [
+      "index.html"
+    ]
+  },
+  "view/index1/sub1_chat.html": {
+    "refer": [
+      "index.html"
+    ]
+  },
+  "view/index2/sub2.html": {
+    "refer": [
+      "view/index2/qr_result.html",
+      "view/index2/qr_star.html"
+    ]
+  },
+  "view/index2/qr_star.html": {
+    "refer": [
+      "view/index2/qr_result.html"
+    ]
+  }
+}

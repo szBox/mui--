@@ -1,0 +1,725 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>商品详情</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../../css/commom.css"/>
+		
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/jquery-2.1.0.js"></script>
+		<script src="../../js/rem.js"></script>
+		<script src="../../js/ajax.js"></script>
+		<script src="../../js/public.js"></script>
+		<style>
+			.mui-content{
+				padding-bottom: 2.6rem;
+			}
+			.my-lunbo{
+				height: 12rem;
+				touch-action: none;	
+			}
+			.my-lunbo .mui-slider-group,.my-lunbo .mui-slider-group a{
+				height: 100% !important;
+			}	
+			.good-moneys-box,.good-select-box,.good-canshu-box,.good-see-box{
+				background: #fff;
+				padding-left: 0.75rem;
+			}
+			.good-name-box{
+				background: #F4F4F4;
+				padding-left: 0.75rem;
+				height: 1.8rem;
+				line-height: 1.8rem;
+				font-size:0.8rem;
+				
+			}
+			.good-moneys-box{
+				padding: 0.75rem;
+			}
+			.good-moneys-box s{
+				font-size: 0.7rem;
+				color: #999;
+				margin-right: 0.75rem;
+			}
+			.good-moneys-box span{
+				color: #a78845;
+				font-size: 0.8rem;
+				font-weight: bold;
+			}
+			.good-moneys-box p{
+				width: 2.5rem;
+				margin: 0.5rem 0;
+				text-align: center;
+				padding: 0 2px;
+				border-radius: 3px;
+				color: #f48f18;
+				border: 1px solid #f48f18;
+			}
+			.good-select-box,.good-bb-box h5{
+				height: 2.2rem;
+				line-height: 2.2rem;
+				margin-top: 0.4rem;
+			}
+			
+			.good-select-box img{
+				margin-top: 0.45rem;
+			}
+			.good-canshu-box{
+				padding-bottom: 0.75rem;
+			}
+			.good-canshu-box h1{
+				font-size: 0.8rem;
+				padding: 0.75rem 0;
+				margin: 0;
+			}
+			.good-canshu-div{
+				padding:0.25rem 0.5rem;
+				margin-right: 0.75rem;
+				margin-bottom:0.25rem;
+				background:#f7f7f7;
+				
+		
+			}
+			.good-canshu-div span:first-child{
+				color:#999;
+				font-size: 0.65rem;
+			}
+			.good-canshu-div span:last-child{
+				flex: 1;
+				margin-left: 2rem;
+				font-size: 0.7rem;
+			}
+			
+			.good-canshu-div{}
+			.my-action-fixed{
+				border:1px solid #f4f4f4;
+				position: fixed;
+				bottom: 0;
+				z-index: 12;
+				height: 2.5rem;
+				width: 100%;
+				background: #fff;
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+			}
+			.my-action-fixed .car-soucang{
+				float:left;
+				height:2.5rem;
+				line-height: 2.5rem;
+				text-align: center;
+				width: 100%;
+				width:3rem;
+				border:1px solid #f4f4f4;
+			}
+			.my-action-fixed .car-soucang img{
+				width: 1.2rem;
+				height: 1.2rem;
+			}
+			.my-action-fixed .car-box img{
+				width: 1rem;
+				height: 1rem;
+			}
+			.my-action-fixed .car-box{
+				position: relative;
+				float:left;
+				height:2.5rem;
+				width:3rem;
+				border:1px solid #f4f4f4;
+				display:flex;
+				align-items:center;
+				justify-content:center;
+		
+			}
+			.my-action-fixed .car-num{
+				height:0.8rem;
+				width:0.8rem;
+				z-index:10;
+				position:absolute;
+				top:0;
+				right:0;
+				background:#b4282d;
+				text-align:center;
+				font-size:0.6rem;
+				color:#fff;
+				line-height:0.8rem;
+				border-radius:50%;
+		
+			}
+			.my-action-fixed .car-join{
+				background:#f48f18;
+		
+				line-height:2.5rem;
+				flex:1;
+				text-align:center;
+				color:#fff;
+			}
+			.my-action-fixed .car-buy{
+				background:#b4282d;
+				line-height:2.5rem;
+				flex:1;
+				text-align:center;
+				color:#fff;
+			}
+		
+			.car-mark-box{
+				display: none;
+				width:100%;
+				height:100%;
+				position:fixed;
+				background:rgba(0, 0, 0, 0.5);
+				z-index:8;
+				bottom:0;
+			}
+			.car-mark-div{
+				width:100%;
+				height:auto;
+				padding:0.75rem;
+				background:#fff;
+				position:fixed;
+				z-index:9;
+				bottom:2.5rem;
+		
+			}
+			
+		
+			.mark-good-top img{
+				width: 5rem;
+				height: 5rem;
+				margin-right: 0.75rem;
+				border: 1px solid #ddd;
+			}
+			.mark-good-top>div{
+				flex: 1;
+			}
+			.mark-good-top>div h3{
+				color:#333;
+				font-size: 0.7rem;
+			}
+			.mark-good-top>div p{
+				color:#333;
+				font-size: 0.7rem;
+			}
+			.mark-good-center{
+				margin-top: 0.5rem;
+			}
+			.mark-good-center>p,.mark-good-bottom>p{
+				color: #333;
+				margin-bottom: 5px;
+			}
+			.mark-good-center span{
+				display:inline-block;
+				padding:0 5px;
+				text-align:center;
+				margin-right:0.5rem;
+				margin-bottom:0.5rem;
+				border:1px solid #666;
+				font-size:0.7rem;
+				color:#333;
+		
+			}
+			.mark-good-center span.active{
+				border:1px solid #b4282d;
+				color:#b4282d;
+
+			}
+			.car-close{
+				position: absolute;
+				right: 0.25rem;
+				top: 0.25rem;
+				width: 1.5rem;
+				height: 1.5rem;
+			}
+			
+			
+			.border-tips{
+				width: 9rem;
+				margin: 1rem auto 1.5rem;
+			}
+			.border-tips i{
+				display: inline-block;
+				height: 1px;
+				width: 2rem;
+				background: #ccc;
+			}
+			.border-tips span{
+				flex: 1;
+				text-align: center;
+			}
+			.good-see-box{
+				padding:0 0.75rem 0.75rem;
+			}
+			.good-see-box:before{
+				content: '';
+				display: table;
+			}
+			.see-div{
+				overflow: hidden;
+			}
+			.see-div>div{
+				float: left;
+				width: 50%;
+				border: 1px solid #f4f4f4;
+				padding: 0.5rem;
+				text-align: center;
+			}
+			.see-div>div:nth-child(2n){
+				border-left: none;
+			}
+			
+			.see-div>div img{
+				width: 5rem;
+				height: 5rem;
+			}
+			.see-div>div h1{
+				-webkit-line-clamp: 1;
+				height: 0.8rem;
+				line-height: 0.8rem;
+				text-align: center;
+			}
+			.see-div>div p{
+				color: #b4282d;
+				font-size: 0.7rem;
+				text-align: center;
+			}
+			.what-box{
+				background: #fff;
+				padding: 0.75rem;
+			}
+			.what-box>div{
+				margin-bottom: 0.25rem;
+			}
+			.what-box>div h1 i{
+				display: inline-block;
+				width: 0.2rem;
+				height: 0.2rem;
+				margin-right: 0.2rem;
+				background:#b4282d;
+			}
+			.what-box>div h1 span{
+				flex: 1;
+				font-size: 0.65rem;
+			}
+			.what-box>div p{
+				line-height: 1rem;
+				padding-left: 0.25rem;
+				color: #303030;
+			}
+			
+			.good-long-box img{
+				width: 100% !important;
+			}
+			.good-long-box video{
+				height: 12rem !important;
+			}
+			
+			
+			.good-bb-box{
+				background: #fff;
+				padding-bottom: 0.75rem;
+				margin-bottom: 0.4rem;
+			}
+			.good-bb-box h5{
+				padding-left: 0.75rem;
+				border-bottom: 1px solid #d9d9d9;
+			}
+			.good-bb-box h5 .bb-more{
+				flex: 1;
+				text-align: right;
+			}
+			
+			.good-bb-box h1 img{
+				width: 2rem;
+				height: 2rem;
+				border-radius: 50%;
+			}
+			.good-bb-box h1 span{
+				margin-left: 0.2rem;
+				width: 8rem;
+				-webkit-line-clamp: 1;
+			}
+			.good-bb-box h1 i{
+				flex: 1;
+				text-align: right;
+				color: #7f7f7f;
+				font-size: 0.6rem;
+			}
+			.good-bb-box>div{
+				padding:0 0.75rem;
+				margin: 0.5rem 0;
+				border-bottom: 1px solid #F4F4F4;
+			}
+			.good-bb-box>div div{
+				color: #333;
+				font-size: 0.65rem;
+				-webkit-line-clamp:5;
+				margin: 0.5rem 0 0.75rem;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">商品详情</h1>
+		</header>
+		
+		<div class="mui-content">
+			<div class="mui-slider my-lunbo">
+				 <div class="mui-slider-group mui-slider-loop">
+					<!--支持循环，需要重复图片节点-->
+					<div class="mui-slider-item mui-slider-item-duplicate"></div>
+				
+					<div class="mui-slider-item mui-slider-item-duplicate"></div>
+				</div>
+			    <div class="mui-slider-indicator my-lunbo-index">
+
+				</div>
+			</div>
+			
+			<!--商品名称-->
+			<div class='good-name-box'></div>
+			
+			<!--商品价格-->
+			<div class='good-moneys-box'></div>
+			
+			<!--商品选择-->
+			<div class='good-select-box'>
+				<span>标准</span>
+				<img class="my-icon-right" src="../../img/address_right.png" alt="">	
+			</div>
+			
+			<!--商品评价-->
+			<div class='good-bb-box' style="display: none"></div>
+			
+			<!--商品参数-->
+			<div class='good-canshu-box'></div>
+			
+			<!--商品长图-->
+			<div class='good-long-box'></div>
+			
+			<!--常见问题-->
+			<div class='what-box'></div>
+			
+			<!--大家都在看-->
+			<div class='good-see-box' style="display: none;">
+				<h1 class="border-tips myflex">
+					<i></i>
+					<span>大家都在看</span>
+					<i></i>
+				</h1>
+				<div class="see-div">
+					
+				</div>
+			</div>
+		</div>
+		
+		<div class="my-action-fixed">
+			<p class="car-soucang">
+				<img src="../../img/icon_collect.png" />
+			</p>
+			<p class="car-box">
+				<img src="../../img/ic_menu_shoping_nor.png" />
+				<span class="car-num" style="display: none;">0</span>
+			</p>
+			<div class="car-join">加入购物车</div>
+			<div class='car-buy'>立即购买</div>
+		</div>
+		
+		<div class="car-mark-box">
+			<div class='car-mark-div'>
+				<div class='mark-good-top myflex'>
+					<img src=""/>
+					<div>
+						<h3>价格：<i style="font-weight: bold;font-size: 0.9rem;color: #a78845;">￥</i><span class='goodOn-money'  style="font-weight: bold;font-size: 0.9rem;color: #a78845;"></span></h3>
+						<p>已选择：<span class='goodOn-type'></span></p>
+					</div>
+				</div>
+				<div class="mark-good-center">
+					<p class='mark-good-type-tips'>请选择规格</p>
+					<div class='mark-good-types'></div>
+				</div>
+				<div class="mark-good-bottom">
+					<p>数量</p>
+					<div class="mui-numbox"  data-numbox-min='1' data-numbox-max='10'>
+					  <button class="mui-btn mui-numbox-btn-minus" type="button">-</button>
+					  <input class="mui-numbox-input good-num" readonly type="number" />
+					  <button class="mui-btn mui-numbox-btn-plus" type="button">+</button>
+					</div>
+				</div>
+				<img class="car-close" src="../../img/icon_close.png"/>
+			</div>
+		</div>
+		<script type="text/javascript">
+			mui.init()
+			loading1 = false;loading2 = false;
+			document.addEventListener('plusready',function(){
+			//重置返回
+			var old_back = mui.back;
+			mui.back = function() {
+				plus.webview.getWebviewById('index2').reload(true)
+				old_back();
+			}
+			var self = plus.webview.currentWebview();
+// 			  var self = {
+// 				  goodId:'1110016'
+// 			  }
+			
+			ajaxGet(goodInfo,{id:self.goodId},function(res){
+					if(res.errno == 0){
+						var banner = '',bannerFirst ='',bannerLast = '',bannerIndex = '';
+						/*获取 轮播数据*/
+						
+						for(var i=0; i<res.data.info.gallery.length;i++){
+							bannerFirst='<div class="mui-slider-item mui-slider-item-duplicate">'+
+											'<a href="#"><img src="'+res.data.info.gallery[res.data.info.gallery.length-1]+'" /></a>'+
+										'</div>';
+							bannerLast='<div class="mui-slider-item mui-slider-item-duplicate">'+
+											'<a href="#"><img src="'+res.data.info.gallery[0]+'" /></a>'+
+										'</div>';			
+							banner+='<div class="mui-slider-item"><a href="#"><img src="'+res.data.info.gallery[i]+'" /></a></div>';
+							bannerIndex+='<div class="mui-indicator"></div>'
+						}
+						/*获取规格参数*/
+						var canshu ='';
+						var canshuTips =`<h1>商品参数</h1>`;
+						for(var i=0; i<res.data.attribute.length;i++){
+							canshu+=`<div class='good-canshu-div myflex'>
+										<span>${res.data.attribute[i].attribute}</span>
+										<span>${res.data.attribute[i].value}</span>
+									</div>`
+						}
+						/*获取长图*/
+						$('.good-long-box').html(res.data.info.detail)
+						// initialize();
+						$('.good-long-box video').css({width:$(document).width()})
+						
+						
+						/*获取常见问题*/
+						var what ='';
+						var whatTips = `<h1 class="border-tips myflex">
+										<i></i>
+										<span>常见问题</span>
+										<i></i>
+									</h1>`;
+						for(var i=0; i<res.data.issue.length;i++){
+							what+=`<div>
+									<h1 class="myflex">
+										<i></i>
+										<span>${res.data.issue[i].question}</span>
+									</h1>
+									<p>${res.data.issue[i].answer}</p>
+								</div>`
+						}
+						
+						$('.my-lunbo .mui-slider-group').html(bannerFirst+banner+bannerLast)
+						$('.my-lunbo-index').html(bannerIndex);
+						$('.my-lunbo-index .mui-indicator').eq(0).addClass('mui-active')
+						// 商品名字
+						$('.good-name-box').html(res.data.info.name)
+						// 商品原价
+						$('.good-moneys-box').html(`<s>原价：￥${res.data.info.counterPrice}</s><span>现价：￥<i style="color:#a78845;font-weight:bold" class="good-money">${res.data.info.retailPrice}</i></span><p>语蔚来</p>`)
+						
+						// 评论
+						var BBlist = '';
+						if(res.data.comment.data.length>0){
+							$('.good-bb-box').show();
+							var BBlistTips = `<h5 class='myflex'><span>评价(<i class="bb-num">${res.data.comment.count}</i>)</span>
+								<span class="bb-more">查看全部</span>
+								<img class="my-icon-right" src="../../img/address_right.png" alt=""></h5>`;
+							// <div class='good-bb-list'></div>
+							for(var i=0; i<res.data.comment.data.length;i++){
+								BBlist+=`<div>
+										<h1 class='myflex'>
+											<img src="${res.data.comment.data[i].avatar}"/>
+											<span class="ellipsis">${res.data.comment.data[i].nickname}</span>
+											<i>${res.data.comment.data[i].addTime}</i>
+										</h1>
+										<div class="ellipsis">
+											${res.data.comment.data[i].content}
+										</div>
+									</div>`
+							}
+							$('.good-bb-box').html(BBlistTips+BBlist)
+							
+						}
+						
+						
+						//商品 图片
+						$('.mark-good-top>img').attr('src',res.data.info.picUrl)
+						//规格参数
+						if(res.data.attribute.length>0){
+							$('.good-canshu-box').html(canshuTips+canshu)
+						}
+						
+						// 常见问题
+						$('.what-box').html(whatTips+what)
+						// mark 商品类型list
+						var typeList = '';
+	// 					for(var i=0; i<res.data.specificationList.length;i++){
+	// 						typeList+=`<p class='mark-good-type-tips'>${res.data.specificationList[i].name}</p>
+	// 									<div class='mark-good-types'>`;
+	// 									for(j=0;j<res.data.specificationList[i].valueList.length;j++){
+	// 											typeList+=`<span typsId=${res.data.specificationList[i].valueList[j].id}>
+	// 												${res.data.specificationList[i].valueList[j].value}
+	// 											</span>`
+	// 									}		
+	// 						typeList+=`</div>`
+	// 					};
+						for(var i=0; i<res.data.productList.length; i++){
+							typeList+=`<span typesMoney="${res.data.productList[i].price}" typsId="${res.data.productList[i].id}">
+										${res.data.productList[i].specifications}
+									</span>`
+									
+						}
+						//  //mark 商品类型list	
+						// $('.mark-good-center').html(typeList)			
+						$('.mark-good-types').html(typeList)
+						$('.mark-good-types span').eq(0).addClass('active') //默认勾选
+						$('.goodOn-type,.good-select-box span').html($('.mark-good-types span').eq(0).html()) //默认勾选的 内容
+						// 获取选中的 商品type
+						
+						$('.goodOn-money').html($('.mark-good-types span').eq(0).attr('typesMoney'))
+						mui('#slider').slider();
+						
+						ajaxGet(goodInfoSee,{id:self.goodId},function(res){
+							if(res.errno == 0){
+								if(res.data.goodsList.length>0){
+									$('.good-see-box').show(500)
+									/*获取大家都在看*/
+									var see ='';
+									var seeTips =`<h1>商品参数</h1>`;
+									for(var i=0; i<res.data.goodsList.length;i++){
+										see+=`<div see-id="${res.data.goodsList[i].id}">
+													<img src="${res.data.goodsList[i].picUrl}" />
+													<h1 class="ellipsis">${res.data.goodsList[i].name}</h1>
+													<p>￥${res.data.goodsList[i].retailPrice}</p>
+												</div>`
+									}
+									// 大家都在看
+									$('.see-div').html(see)
+									$('.see-div>div:gt(1)').css({borderTop:'none'})
+								}
+								
+							}	
+						})	
+						plus.nativeUI.closeWaiting();
+							
+						
+					}
+					
+				
+			})
+				
+			ajaxGet(carList,{id:self.goodId},function(res){
+				// console.log('res'+JSON.stringify(res))
+				if(res.errno == 0){
+					if(res.data.cartTotal.goodsCount>0){
+						$('.car-num').html(res.data.cartTotal.goodsCount);
+						$('.car-num').show()
+					}
+					
+				}
+			})	
+			
+			
+			setTimeout(function(){
+				var gallery = mui('.my-lunbo.mui-slider');
+				gallery.slider({
+					 interval:3000//自动轮播周期，若为0则不自动播放，默认为0；
+				});
+					
+			},300)
+		
+			mui('body').on('tap', '.good-select-box', function(e) {
+				console.log(mui('.mui-numbox').numbox().getValue(),$('.good-money').html())
+				$('.car-mark-box').show()
+				$('.car-join').addClass('car-join-y')
+				$('.car-buy').addClass('car-buy-yes')
+			})
+			.on('tap', '.car-close', function(e) {
+				$('.car-mark-box').hide()
+				$('.car-join').removeClass('car-join-y')
+				$('.car-buy').removeClass('car-buy-yes')
+			})
+			.on('tap', '.mark-good-types span', function(e) {
+				/*选择商品 类型*/
+				$(this).addClass('active').siblings().removeClass('active')
+				$('.goodOn-money').html($('.mark-good-types span.active').attr('typesMoney')*mui('.mui-numbox').numbox().getValue())//切换 再初始化 数量和价格
+				$('.goodOn-type,.good-select-box span').html($(this).html())
+			
+			})
+			.on('tap', '.car-join', function(e) {
+				/*第一次点击‘加入购物车’  --提示一下*/
+				$('.car-mark-box').show()
+				$(this).addClass('car-join-y')
+				$('.car-buy').addClass('car-buy-yes')
+				
+			})
+			.on('tap', '.car-join-y', function(e) {
+				// alert(self.goodId)
+				/*点击‘加入购物车’  --提交*/
+				/*提交数据*/
+				if(isLogin=='true'){
+					var productId = $('.mark-good-types span.active').attr('typsid');
+					var number = $('.good-num').val();
+					
+					var carNum = Number($('.car-num').html());
+					$('.car-num').html(++carNum)
+					ajaxPost(carAdd,{goodsId:self.goodId,number:number,productId:productId},function(res){
+						if(res.errno == 0){
+							$('.car-num').show()
+							mui.toast('添加成功')
+						}
+					})	
+				}else{
+					openView('../auth/login.html','login.page',{'goodInfo':'off'})
+				}
+				
+					
+			})
+			.on('tap', '.car-buy', function(e) {
+				$(this).addClass('car-buy-yes')
+				$('.car-mark-box').show()
+// 				var parentPage = plus.webview.getWebviewById("index.page"); 
+// 				mui.fire(parentPage,'muiGoIndex',{pageId:'index2'});
+// 				mui.back()
+			})
+			.on('tap', '.car-buy-yes', function(e) {
+				if(isLogin=='true'){
+					var productId = $('.mark-good-types span.active').attr('typsid');
+					var number = $('.good-num').val();
+					ajaxPost(carBuy,{goodsId:self.goodId,number:number,productId:productId},function(res){
+						if(res.errno == 0){
+							plus.nativeUI.showWaiting()
+							openView('good_order.html','good_order.page',{cartId:res.data})
+						}
+					})
+					
+				}else{
+					openView('../auth/login.html','login.page',{'goodInfo':'off'})
+				}
+				/*购买*/
+				
+			})
+			.on('change','.good-num',function(e){
+				// +++ ---
+				var num =mui('.mui-numbox').numbox().getValue();
+				$('.goodOn-money').html(num*$('.mark-good-types span.active').attr('typesMoney'))
+			})
+			.on('tap','.car-box',function(e){
+				// alert('2')
+				var parentPage = plus.webview.getWebviewById("index"); 
+				mui.fire(parentPage,'sub2',{pageId:'index2'});
+				mui.back()
+			})
+		})
+		</script>
+		
+		
+	</body>
+
+</html>

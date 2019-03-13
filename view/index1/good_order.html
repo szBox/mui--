@@ -1,0 +1,436 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>填写订单</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../../css/commom.css"/>
+		
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/jquery-2.1.0.js"></script>
+		<script src="../../js/rem.js"></script>
+		<script src="../../js/ajax.js"></script>
+		<script src="../../js/public.js"></script>
+		
+		<style>
+			
+			.mui-content{
+				padding-bottom: 2.5rem;
+			}
+			
+			.address-list{
+				background: #fff;
+				padding: 0.75rem;
+				
+			}
+			.name-box{
+				width: 2.5rem;
+			}
+			.name-box h3{
+				font-size: 0.75rem;
+			}
+			.name-box p{
+				font-size: 0.6rem;
+				color:#b4282d;
+				width:1.8rem;
+				height: 1rem;
+				line-height: 1rem;
+				text-align: center;
+				border:1px solid #b4282d;
+			
+			}
+			.phone-box{
+				flex: 1;
+				margin: 0 0.75rem 0 0.75rem;
+			}
+			.address-text{
+				-webkit-line-clamp: 2;
+				line-height: 0.8rem;
+			}
+			.close{
+				width: 1.2rem;
+			}
+			.address-tips{
+				height: 0.25rem;
+				background: url(../../img/address-bg-bd.png);
+			}
+			
+			.good-list{
+				background: #fff;
+				margin: 6px 0;
+				padding: 0.75rem;
+				
+			}
+			.good-list>div{
+				border-bottom: 1px solid #eee;
+				/* line-height: 2rem; */
+				padding: 0.75rem 0;
+			}
+			.good-list>div>p{
+				flex: 1;
+				text-align: right;
+				color: #333;
+			}
+			.good-div{
+				padding: 0.75rem;
+				background: #fff;
+				position: relative;
+			}
+			.good img{
+				width: 4.5rem;
+				height:4.5rem;
+				border: 1px solid #eee;
+			}
+			.good div{
+				margin-left: 0.75rem;
+				margin-right: 1rem;
+			}
+			.good div h1{
+				-webkit-line-clamp: 2;
+			}
+			.good >p{
+				position: absolute;
+				right: 0.75rem;
+				top: 1.1rem;
+			}
+			.good div>h2{
+				color: #666;
+				margin: 0 0 1rem;
+			}
+			.good div>h3{
+				font-size: 0.8rem;
+			}
+			.my-action-fixed{ 
+				position: fixed;
+				bottom: 0;
+				z-index: 12;
+				height: 2.5rem;
+				width: 100%;
+				background: #fff;
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				border-top:1px solid rgba(0, 0, 0, 0.2);
+
+			}
+			.my-action-fixed .money-div{
+				flex: 1;
+			}
+			.my-action-fixed .money-div span{
+				color: #b4282d;
+				padding-left: 0.75rem;
+				font-size: 0.8rem;
+			}
+			.my-action-fixed .money-div span i{
+				color: #b4282d;
+			}
+			.my-action-fixed .go-buy{
+				color: #fff;
+				background: #b4282d;
+				width: 6rem;
+				line-height: 2.5rem;
+				height: 100%;
+				font-size: 0.75rem;
+				text-align: center;
+				border-top:1px solid #b4282d;
+
+			}
+			.noAddress{
+				background: #fff;
+				text-align: center;
+				padding: 1rem 0;
+			}
+			.noAddress span{
+				flex: 1;
+				margin-left: 0.6rem;
+				color: #999;
+			}
+			.noAddress img{
+				width: 1.2rem;
+			}
+			.Address img{
+				width: 1.2rem;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">填写订单</h1>
+		</header>
+		
+		<div class="mui-content">
+			
+			<div class="address-box" id='address-box'>
+				<div class='address-tips'></div>
+				<div class="myflex noAddress" style='display: none;'>
+					<span>还没有收货地址</span>
+					<img src="../../img/address_right.png" >
+				</div>
+			</div>
+			<div class="bb-box" style="background: #fff;margin: 6px 0;">
+				<textarea class='bb' rows="3" maxlength=50 placeholder="如需要，请输入留言"></textarea>
+			</div>
+			<div class='good-list'>
+				<div class="myflex">
+					<i>商品合计</i>
+					<p>￥<span class="all-money"></span>元</p>
+				</div>
+				<div class="myflex">
+					<i>运费</i>
+					<p>￥<span class="freightPrice"></span>元</p>
+				</div>
+				<div class="myflex">
+					<i>优惠券</i>
+					<p>-￥<span>0</span>元</p>
+				</div>
+			</div>
+			
+			<div class="good-div">
+				
+			</div>
+			<!-- <div class="wx" style="float:left; padding: 30px;background: lightblue;">微信支付</div>
+			<div class="zzz" style="float:left;padding: 30px;background: lightslategrey;">支付宝支付</div> -->
+		</div>
+		
+		<div class='my-action-fixed'>
+		
+			<div class='money-div'>
+				<span>实付：￥<i class='actualPrice'></i></span>
+			</div>
+			<div class="go-buy">去付款</div>
+			
+		</div>
+		<script type="text/javascript">
+			mui.init()
+			var self = null;
+			document.addEventListener('plusready',function(){
+				self = plus.webview.currentWebview();
+				getInit()
+				
+// 				if(self.cartId==0){
+// 					var old_back = mui.back;
+// 					mui.back = function() {
+// 						plus.webview.getWebviewById('index2').reload(true)
+// 						old_back();
+// 					}
+// 				}
+			})	
+		
+			function getInit(){
+				ajaxGet(buying,{
+					cartId:self.cartId,
+					addressId:0,
+					couponId:0,
+					grouponRulesId:0
+				},function(res){
+					var goodList = '';
+					if(res.errno == 0){
+						if(res.data.checkedAddress.id==0){
+							$('.noAddress').show()
+						}else{
+							if(res.data.checkedAddress.isDefault==true){
+								var init =`<p class="address-init">默认</p>`
+								// var initId = 1
+							}else{
+								var init =`<p class="address-init" style="display:none;"></p>`
+								// var initId = 0
+							}
+							var addressTips =`<div class='address-tips'></div>`;
+							var address=`<div class="Address" style="">
+										<div class='address-list myflex' data-id="${res.data.checkedAddress.id}">
+												<div class="name-box">
+													<h3 data-init="${res.data.checkedAddress.isDefault}">${res.data.checkedAddress.name}</h3>
+													${init}
+												</div>
+												<div class="phone-box">
+													<h3>${res.data.checkedAddress.mobile}</h3>
+													<p class="address-text ellipsis">${res.data.checkedAddress.address}</p>
+												</div>
+												<img src="../../img/address_right.png" >
+										</div>
+									</div>`
+							$("#address-box").html(addressTips+address);   		
+						}
+						for(var i=0; i<res.data.checkedGoodsList.length; i++){
+							goodList+=`<div class="good myflex">
+									<img src="${res.data.checkedGoodsList[i].picUrl}" alt="">
+									<div>
+										<h1 class="ellipsis">${res.data.checkedGoodsList[i].goodsName}</h1>
+										<h2 class="ellipsis">`;
+										for(var j=0;j<res.data.checkedGoodsList[i].specifications.length;j++){
+											goodList+=`${res.data.checkedGoodsList[i].specifications[j]} `
+										}
+										goodList+=`</h2>
+										<h3>￥<span>${res.data.checkedGoodsList[i].price}</span></h3>
+									</div>
+									<p>x<span>${res.data.checkedGoodsList[i].number}</span></p>
+								</div>`
+						}
+						$('.good-div').html(goodList)
+						$('.all-money').html(res.data.goodsTotalPrice)
+						$('.freightPrice').html(res.data.freightPrice)
+						$('.actualPrice').html(res.data.actualPrice)
+						plus.nativeUI.closeWaiting()
+						
+					}
+				})
+			}
+			function Doc(doc){
+				/*更新地址*/
+				ajaxGet(buying,{
+					cartId:self.cartId,
+					addressId:doc,
+					couponId:0,
+					grouponRulesId:0
+				},function(res){
+					if(res.errno == 0){
+						$('.noAddress').hide()
+						if(res.data.checkedAddress.isDefault==true){
+							var init =`<p class="address-init">默认</p>`
+							// var initId = 1
+						}else{
+							var init =`<p class="address-init" style="display:none;"></p>`
+							// var initId = 0
+						}
+						var addressTips =`<div class='address-tips'></div>`;
+						var address=`<div class="Address" style="">
+									<div class='address-list myflex' data-id="${res.data.checkedAddress.id}">
+											<div class="name-box">
+												<h3 data-init="${res.data.checkedAddress.isDefault}">${res.data.checkedAddress.name}</h3>
+												${init}
+											</div>
+											<div class="phone-box">
+												<h3>${res.data.checkedAddress.mobile}</h3>
+												<p class="address-text ellipsis">${res.data.checkedAddress.address}</p>
+											</div>
+											<img src="../../img/address_right.png" >
+									</div>
+								</div>`
+						$("#address-box").html(addressTips+address); 
+					}
+					
+				})
+				
+			}   
+			mui('body').on('tap', '.noAddress,.Address', function(e) {
+				openView("./good_addressList.html","good_addressList.page")
+			})
+			.on('tap', '.go-buy', function(e) {
+				$('.bb').blur()
+				var buyAddress= $('.address-list').attr('data-id')
+				if(!buyAddress){
+					mui.toast('请选择地址')
+				}else{
+					plus.nativeUI.showWaiting();
+					//alert(self.cartId+"..."+buyAddress)
+					ajaxPost(buy,{
+						cartId:self.cartId,
+						addressId:buyAddress,
+						message:$('.bb').val()
+					},function(res){
+						console.log('成功了么'+JSON.stringify(res))
+						if(res.errno == 0){
+							var buyOrderId = res.data.orderId;
+							var ALIPAYSERVER='http://demo.dcloud.net.cn/helloh5/payment/alipay.php?total=0.01';    
+							var WXPAYSERVER = host+'/wx/apppay/prepay?orderId='+buyOrderId;
+							plus.webview.getWebviewById('index2').reload(true)
+							plus.webview.getWebviewById('index3').reload(true)
+							pay('wxpay',WXPAYSERVER,buyOrderId)
+						}
+						
+					})
+				}
+			})
+			.on('tap', '.wx', function(e) {
+				mui.alert('支付成功','蔚来空间','我知道了',function (e) {
+				  openView('./payResult.html','payResult',{'payResult':'yes','payOrderId':'payOrderId'})
+				  setTimeout(function(){
+					    plus.webview.currentWebview().close('none')
+				  },500)
+				},'div')
+			})
+			.on('tap', '.zzz', function(e) {
+				var ALIPAYSERVER='http://demo.dcloud.net.cn/helloh5/payment/alipay.php?total=0.01';    
+				pay('alipay',ALIPAYSERVER)
+			})
+			
+			
+			var wxChannel = null; // 微信支付    
+			var aliChannel = null; // 支付宝支付    
+			var channel = null;   //支付通道   
+
+			mui.plusReady(function() {      
+				// 获取支付通道    
+				plus.payment.getChannels(function(channels){
+				for (var i in channels) {   
+						if (channels[i].id == "wxpay") {   
+							 wxChannel=channels[i];    
+						}else{   
+							aliChannel=channels[i];    
+						}   
+					}       
+				},function(e){    
+				 alert("获取支付通道失败："+e.message);    
+				});    
+			})
+			
+			// 2. 发起支付请求    
+			function pay(id,server,payOrderId){
+				// 从服务器请求支付订单    
+				var PAYSERVER='';    
+					if(id=='alipay'){    
+					PAYSERVER=server;    
+					channel = aliChannel;    
+				}else if(id=='wxpay'){    
+					PAYSERVER=server;    
+					channel = wxChannel;    
+				}else{    
+					plus.nativeUI.alert("不支持此支付通道！",null,"捐赠");    
+					return;    
+				}
+				var token = localStorage.getItem('token');
+				var xhr=new XMLHttpRequest();
+				xhr.onreadystatechange=function(){
+					switch(xhr.readyState){    
+						case 4:    
+						if(xhr.status==200){
+							var res=JSON.parse(xhr.responseText);
+							console.log(JSON.stringify(res.data))
+							plus.payment.request(channel,JSON.stringify(res.data),function(result){
+								plus.nativeUI.showWaiting();
+								openView('./payResult.html','payResult',{'payResult':'yes','payOrderId':payOrderId});
+								setTimeout(function(){
+									plus.webview.currentWebview().close('none')
+								},500)  
+							},function(error){  
+								plus.nativeUI.showWaiting();
+								openView('./payResult.html','payResult',{'payResult':'no','payOrderId':payOrderId});
+								setTimeout(function(){
+									plus.webview.currentWebview().close('none')
+								},500)     
+							});    
+						}else{    
+							alert("获取订单信息失败！");    
+						}    
+						break;    
+						default:    
+						break;    
+					}    
+				}    
+				xhr.open('GET',PAYSERVER);  
+				xhr.setRequestHeader('X-Litemall-Token',token);  
+				xhr.send();    
+
+			}   
+			 
+			 
+		</script>
+		
+		
+	</body>
+
+</html>

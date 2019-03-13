@@ -1,0 +1,184 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>登录</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/commom.css">
+	
+		<script src="../../js/jquery-2.1.0.js"></script>
+		<script src="../../js/rem.js"></script>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/ajax.js"></script>
+		<script src="../../js/public.js"></script>
+
+		<script>
+			mui.plusReady(function() {
+				plus.navigator.isImmersedStatusbar(true);
+				plus.navigator.setStatusBarStyle('light');
+				plus.navigator.setStatusBarBackground('rgba(0,0,0,.5)'); //设置状态栏背景色
+
+			})
+		</script>
+		
+		<style>
+			.mui-content,body{
+				background: #fff;
+			}
+			.mui-input-group:before,.mui-input-group .mui-input-row:after,.mui-input-group:after{
+				height: 0;
+			}
+			.mui-input-row {
+				margin: 0 0.75rem;
+				border-bottom: 1px solid #c8c7cc;
+				margin-bottom: 0.5rem;
+			}
+			
+			.mui-content{
+				margin-top: 8rem;
+			}
+			.login{
+				margin: 4rem 2rem 1rem;
+				background: #ab956c;
+				font-size: 0.75rem;
+				color: #fff;
+				text-align: center;
+				line-height: 2rem;
+				border-radius: 5px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a id="tuihou" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">登录</h1>
+		</header>
+		
+		<div class="mui-content">
+			<form class="mui-input-group">
+				<div class="mui-input-row">
+				<input type="text"  class="mui-input-clear phone" maxlength="11" placeholder="手机号">
+				</div>
+				<div class="mui-input-row">
+					<input type="password" class="mui-input-clear pwd" placeholder="密码">
+				</div>
+			</form>
+			<div class='login btn-sure'>登录</div>
+			<div class="ov" style="padding: 0 0.75rem;">
+				<span class="reg lf">注册账号</span>
+				<span class="forget rt">忘记密码？</span>
+			</div>
+		</div>		
+		<script type="text/javascript">
+			var subPages=['./view/index1/sub1.html','./view/index2/sub2.html','./view/index3/sub3.html'];
+			var subPagesIds = ['index1','index2','index3']
+			mui.init({
+				 preloadPages:[
+						{
+						  url:'../../index.html',
+						  id:'index',
+						  styles:{},//窗口参数
+						  extras:{},//自定义扩展参数
+// 						  subpages:[{
+// 							url:'./view/index1/sub1.html',
+// 							id:'index1',
+// 						  },{
+// 							url:'./view/index1/sub2.html',
+// 							id:'index2',
+// 						  },{
+// 							url:'./view/index1/sub3.html',
+// 							id:'index3',
+// 						  }]//预加载页面的子页面 
+						}
+				  ],
+			})
+			mui.plusReady(function(){
+				plus.nativeUI.closeWaiting();
+				mui('body').on('tap', '.btn-sure', function(e) {
+					$('input').blur();
+					if(!$('.phone').val()){
+						mui.toast('请输入手机号')
+					}else if(isPhone($('.phone').val())==false){
+						
+					}else if(!$('.pwd').val()){
+						mui.toast('请输入密码')
+					}else if(isPwd($('.pwd').val())==false){
+						
+					}else{
+						plus.nativeUI.showWaiting();
+						var param = {
+								username:$('.phone').val(),
+								password:$('.pwd').val(),
+// 								mobile:$('.phone').val(),
+// 								code:$('.yzm').val(),
+						};
+						mui.ajax(login,{
+							data:JSON.stringify(param),
+							dataType:'json',//服务器返回json格式数据
+							type:'post',//HTTP请求类型
+							timeout:10000,//超时时间设置为10秒；
+							headers:{'Content-Type':'application/json'},	              
+							//服务器返回响应，根据响应结果，分析是否登录成功；
+							success:function(res){
+								console.log('登录',res)
+								if(res.errno == 0){
+									localStorage.setItem('token',res.data.token),
+									localStorage.setItem('isLogin','true'),
+									localStorage.setItem('userInfo',JSON.stringify(res.data.userInfo)),
+									// openView("../index3/order/order0.html","order0.page")
+									// openView("../index2/sub2.html","sub2.page")
+									// openView("../index1/good_info.html","good_info.page")
+									// openView("../index3/wallet/wallet.html","wallet.page")
+									plus.webview.getWebviewById('index2').reload(true)
+									plus.webview.getWebviewById('index3').reload(true)
+									var ss =plus.webview.currentWebview().goodInfo;
+									
+									if(ss=='off'){
+										plus.webview.getWebviewById('index1').reload(true)
+										plus.webview.getWebviewById('good_info.page').reload(true)
+										setTimeout(function(){
+											mui.toast('登录成功')
+											plus.nativeUI.closeWaiting();
+											mui.back()
+										},1000)
+									}else{
+										setTimeout(function(){
+											mui.toast('登录成功')
+											plus.nativeUI.closeWaiting();
+											openView("../../index.html","index");
+										},1000)
+									}
+									
+								}else{
+									plus.nativeUI.closeWaiting();
+									mui.toast(res.errmsg)
+								}
+							},
+							error:function(xhr,type,errorThrown){
+								//异常处理；
+								console.log(type);
+							}
+						});
+						
+					}
+				})
+				.on('tap', '.reg', function(e) {
+					// plus.nativeUI.showWaiting()
+					openView("./reg.html","./reg.page") //转账
+				})
+				.on('tap', '.forget', function(e) {
+					// plus.nativeUI.showWaiting()
+					openView("./forget.html","./forget.page") //转账
+				})
+				
+				
+			})
+			
+			
+		</script>
+	</body>
+
+</html>

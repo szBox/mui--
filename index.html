@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <link href="css/mui.min.css" rel="stylesheet"/>
+	<link rel="stylesheet" type="text/css" href="fonts/iconfont.css"/>
+	<link rel="stylesheet" type="text/css" href="css/commom.css"/>
+    <script src="js/mui.min.js"></script>
+   	<!--<script src="js/vue.js"></script>-->
+   	<script src="js/jquery-2.1.0.js"></script>
+    <script src="js/rem.js"></script>
+	<script src="js/public.js"></script>
+    
+   	<script>
+		mui.plusReady(function() {
+			plus.navigator.isImmersedStatusbar(true);
+			plus.navigator.setStatusBarStyle('light');
+			plus.navigator.setStatusBarBackground('rgba(0,0,0,.5)'); //设置状态栏背景色
+
+		})
+
+	</script>
+</head>
+<body>
+	<div id='index'>
+		<header class="mui-bar mui-bar-nav">
+	   	 <h1 class="mui-title" id='title'></h1>
+		</header>
+		
+		<nav class="mui-bar mui-bar-tab my-foot-bar">
+		    <a class="mui-tab-item" href="./view/index1/sub1.html" page-id='index1'>
+		        <span class="mui-icon iconfont icon-shouye"></span>
+		        <span class="mui-tab-label">首页</span>
+		    </a>
+		    <a class="mui-tab-item" href="./view/index2/sub2.html" page-id='index2'>
+		        <span class="mui-icon iconfont icon-gouwuche"></span>
+		        <span class="mui-tab-label">购物车</span>
+		    </a>
+		    <a class="mui-tab-item" href="./view/index3/sub3.html" page-id='index3'>
+		        <span class="mui-icon iconfont icon-gerenzhongxinwoderenwubiaozhuntouxianxing"></span>
+		        <span class="mui-tab-label">个人中心</span>
+		    </a>
+		</nav>
+	
+	
+	</div>
+	
+	 <script type="text/javascript" charset="utf-8">
+      	mui.init();
+      	var subPages=['./view/index1/sub1.html','./view/index2/sub2.html','./view/index3/sub3.html'];
+      	var subPagesIds = ['index1','index2','index3']
+//    	子页面打开的样式
+      	var subPageStyle={
+      		top:'44px',
+      		bottom:'50px'
+      	}
+      	
+//    	手机原生硬件系统加载完毕
+		function muiRefresh(){
+			mui.plusReady(function(){
+//    		当前的显示窗口(页面)
+      		var self =plus.webview.currentWebview();
+      		
+//    			循环每一个子页面,创建webview
+      		for(var i=0; i<subPages.length; i++){
+//    			参数1:地址  参数2:id  参数3:样式  参数4:页面传参
+				var sub = plus.webview.create(subPages[i],subPagesIds[i],subPageStyle);
+//				先把所有窗体给隐藏
+				sub.hide();
+				self.append(sub);
+      		}
+      		
+//    		显示第一个窗体
+
+			plus.webview.show(subPagesIds[0])
+			$('.my-foot-bar a').eq(0).addClass('mui-active')
+			var labelName= $('.my-foot-bar a').eq(0).find('.mui-tab-label').html();
+			$('#title').html(labelName)
+			
+      		var wgtVer=null;  
+      		// document.addEventListener('plusready',function(){
+      			// 获取本地应用资源版本号  
+      			plus.runtime.getProperty(plus.runtime.appid,function(inf){  
+      				wgtVer=Number(inf.version.split('.').join(''));
+      				checkUpdate()
+      			});
+      			
+      			// 检测更新  
+      		var checkUrl="http://weilaimj.cn:8080/mjfenxiao/checkVersion";  
+      		function checkUpdate(){
+      		var xhr=new XMLHttpRequest();  
+      		xhr.onreadystatechange=function(){  
+      			switch(xhr.readyState){  
+      				case 4:  
+      				plus.nativeUI.closeWaiting();  
+      				if(xhr.status==200){
+      					var res=JSON.parse(xhr.responseText)
+      					console.log(JSON.stringify(res))
+      					var newVer = Number(res.version.version.split('.').join(''))
+      					console.log("检测更新成功："+newVer);  
+      					if(wgtVer<newVer){  
+      						var btnArray = ['更新','稍后'];
+      						mui.confirm('有新版本发布,请下载更新', '蔚来空间', btnArray, function(e) {
+								if (e.index == 0) {
+      								var url = res.version.version_url;
+      								var task=plus.downloader.createDownload( url, {}, function(download,status){ //安装到手机的目录
+      									if ( status == 200 ) { 
+      										plus.runtime.install(download.filename);  // 安装下载的apk文件
+      										// that.installWgt(d.filename); // 安装wgt包
+      									} else {
+      										//console.log("下载wgt失败！");
+      										mui.toast("下载更新失败！");
+      										plus.nativeUI.closeWaiting();
+      									}
+      								});
+      								 task.addEventListener("statechanged", function (download, status) {
+      								switch (download.state) {
+      									case 2:
+      										plus.nativeUI.showWaiting("正在下载...");
+      										break;
+      									case 3:		
+      										var percent = download.downloadedSize / download.totalSize * 100;
+      										plus.nativeUI.showWaiting("已下载 " + parseInt(percent) + "%");				
+      										// that.percent = download.downloadedSize / download.totalSize * 100;
+      											// 下载进度 可以根据情况显示
+      										break;
+      									case 4:
+      										mui.toast("下载完成");
+      										plus.nativeUI.closeWaiting();
+      										break;
+      								}
+      							});
+      							task.start();
+								}
+      						})
+      					}else{  
+      						
+      					}  
+      				}else{  
+      					
+      				}  
+      				break;  
+      				default:  
+      				break;  
+      			}  
+      			}
+      			xhr.open('GET',checkUrl);  
+      			xhr.send();  
+      		}
+			
+      	})
+		}
+      	muiRefresh()
+      	mui('.mui-bar-tab').on('tap','a',function(){
+			// if(!$(this).hasClass('mui-active')){
+				var tagPage =this.getAttribute('page-id');
+				var title = document.getElementById("title");
+				title.innerHTML = this.querySelector('.mui-tab-label').innerHTML;
+				plus.webview.hide();
+				plus.webview.show(tagPage,"fade-in",100);
+			// }
+// 			if(this.getAttribute('page-id')=='index2'||this.getAttribute('page-id')=='index3'){
+// 				// alert(isLogin)
+// 				if(isLogin==null||isLogin==false){
+// 					openView("./view/auth/login.html","login.page") //
+// 				}
+// 			}
+			
+      	})
+		function goIndex(e){
+			plus.webview.hide(subPagesIds[0])
+			var tagPage =e;
+			$('.my-foot-bar a').eq(0).removeClass('mui-active');
+			$('.my-foot-bar a').eq((e.split('index')[1]-1)).addClass('mui-active');
+			var labelName= $('.my-foot-bar a').eq((e.split('index')[1]-1)).find('.mui-tab-label').html();
+			$('#title').html(labelName)
+			plus.webview.show(tagPage,"fade-in",100);
+		}
+		  //监听安卓返回键
+		var first = null;
+		mui.back = function() {
+		    if (!first) {
+		        first = new Date().getTime();
+		        mui.toast('再按一次退出应用');
+		        setTimeout(function() {
+		            first = null;
+		        }, 1000);
+		    } else {
+		        if (new Date().getTime() - first < 1000) {
+		            plus.runtime.quit();
+		        }
+		    }
+		}
+				//刷新事件
+		window.addEventListener('refresh',function(){
+			muiRefresh()
+		});
+		//goIndex 事件
+		window.addEventListener('sub1',function(e){
+			var pageId = e.detail.pageId
+			goIndex(pageId)
+			// plus.webview.getWebviewById('index1').reload(true)
+		});
+		window.addEventListener('sub2',function(e){
+			var pageId = e.detail.pageId
+			goIndex(pageId)
+			plus.webview.getWebviewById('index2').reload(true)
+		});
+		var flag = false;
+		//创建遮罩蒙板
+		var mask = mui.createMask(function() {
+			//设置点击蒙板不会自动消失
+			//但调用close方法关闭mask时，必须返回true
+			return flag;
+		}); 
+		//监听自定事件
+		//打开遮罩蒙板
+		window.addEventListener("openMask", function(e) {
+				mask.show(); //显示遮罩
+		});
+		//关闭遮罩蒙板
+		window.addEventListener("closeMask", function(e) {
+			console.log('e什么---'+JSON.stringify(e))
+				flag = e.detail.flag
+				mask.close();
+				
+			
+
+		});
+
+		
+    </script>
+    
+    <style>
+    	
+    </style>
+</body>
+</html>

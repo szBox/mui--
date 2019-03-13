@@ -1,0 +1,186 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>注册</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/commom.css">
+	
+		<script src="../../js/jquery-2.1.0.js"></script>
+		<script src="../../js/rem.js"></script>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/ajax.js"></script>
+		<script src="../../js/public.js"></script>
+
+		<script>
+		
+		</script>
+		
+		<style>
+			.mui-content,body{
+				background: #fff;
+			}
+			.mui-input-group:before,.mui-input-group .mui-input-row:after,.mui-input-group:after{
+				height: 0;
+			}
+			.mui-input-row {
+				margin: 0 0.75rem;
+				border-bottom: 1px solid #c8c7cc;
+				margin-bottom: 0.5rem;
+			}
+			
+			.mui-content{
+				margin-top: 5rem;
+			}
+			.btn-sure{
+				margin: 4rem 2rem 1rem;
+				background: #ab956c;
+				font-size: 0.75rem;
+				color: #fff;
+				text-align: center;
+				line-height: 2rem;
+				border-radius: 5px;
+			}
+			.mui-input-group .mui-input-row.yzm-div {
+				height: 2.5rem;
+				border: none;
+			}
+			.yzm-div input{
+				flex: 1;
+				border-bottom: 1px solid #c8c7cc;
+				width: 60% !important;
+				margin-right: 1rem;
+			}
+			.yzm-div i{
+				
+				width:5rem !important;
+				height: 1.8rem;
+				line-height: 1.8rem;
+				border-radius: 5px;
+				color: #fff;
+				font-size: 0.65rem;
+				text-align: center;
+				background: #ab956c;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a id="tuihou" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">注册</h1>
+		</header>
+		
+		<div class="mui-content">
+			<form class="mui-input-group">
+			<!-- 	<div class="mui-input-row">
+				<input type="text" class="mui-input-clear name" maxlength="10" placeholder="用户名">
+				</div> -->
+				<div class="mui-input-row">
+					<input type="text" maxlength="11" class="mui-input-clear phone" placeholder="手机号">
+				</div>
+				<div class="mui-input-row">
+					<input type="password" maxlength="16" class="mui-input-clear pwd" placeholder="6-16位数字,字母密码组合">
+				</div>
+				<div class="mui-input-row">
+					<input type="password" class="mui-input-clear pwd2" placeholder="确认密码">
+				</div>
+				<div class="mui-input-row">
+					<input type="text" class="mui-input-clear invitecode" placeholder="邀请码(选填)">
+				</div>
+				
+				<div class="mui-input-row myflex yzm-div">
+					<input type="number" readonly class="yzm" placeholder="验证码">
+					<i class='getYzm yzmText'>获取验证码</i>
+					
+				</div>
+			</form>
+			<div class='btn-sure'>注册</div>
+			
+		</div>		
+		<script type="text/javascript">
+// 			var param = {
+// 							username:$('.name').val(),
+// 							password:$('.pwd').val(),
+// 							mobile:$('.phone').val(),
+// 							code:$('.yzm').val(),
+// 					};
+// 			var v =JSON.stringify(param)
+// 			alert(typeof v)
+			mui.init()
+			mui.plusReady(function(){
+				mui('body').on('tap', '.btn-sure', function(e) {
+					$('input').blur();
+// 					if(!$('.name').val()){
+// 						mui.toast('请输入用户名')
+// 					}
+					if(!$('.phone').val()){
+						mui.toast('请输入手机号')
+					}else if(isPhone($('.phone').val())==false){
+						
+					}
+					else if(!$('.pwd').val()){
+						mui.toast('请输入密码')
+					}else if(isPwd($('.pwd').val())==false){
+						
+					}else if(!$('.pwd2').val()){
+						mui.toast('请确认密码')
+					}
+					else if(isPwd($('.pwd2').val())==false){
+						
+					}
+					else if($('.pwd').val()!=$('.pwd2').val()){
+						mui.toast('密码不一致')
+					}
+					else if(!$('.yzm').val()){
+						mui.toast('请输入验证码')
+					}else{
+						var param = {
+								username:$('.phone').val(),
+								password:$('.pwd').val(),
+								mobile:$('.phone').val(),
+								invitecode:$('.invitecode').val(),
+								code:$('.yzm').val(),
+						};
+						
+						mui.ajax(reg,{
+							data:param,
+							dataType:'json',//服务器返回json格式数据
+							type:'post',//HTTP请求类型
+							timeout:10000,//超时时间设置为10秒；
+							headers:{'Content-Type':'application/x-www-form-urlencoded'},	              
+							//服务器返回响应，根据响应结果，分析是否登录成功；
+							success:function(res){
+								console.log('注册',res)
+								if(res.errno == 0){
+									mui.toast('注册成功')
+									// plus.nativeUI.showWaiting();
+									setTimeout(function(){
+										mui.back()
+									},300)
+								}else{
+									mui.toast(res.errmsg)
+								}
+							},
+							error:function(xhr,type,errorThrown){
+								//异常处理；
+								console.log(type);
+							}
+						});
+						
+					}
+				})
+				.on('tap', '.getYzm', function(e) {
+					
+					sendYzm()
+				})
+			})
+			
+			
+			
+		</script>
+	</body>
+
+</html>

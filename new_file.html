@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+	<meta charset="UTF-8">
+
+	<head>
+		<script src="js/jquery-2.1.0.js"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$(".flip").click(function() {
+					$(".panel").slideToggle(5000, function() {
+						$(this).css({
+							color: 'red'
+						})
+					});
+				});
+			});
+		</script>
+
+		<style type="text/css">
+			div.panel,
+			p.flip {
+				margin: 0px;
+				padding: 5px;
+				text-align: center;
+				background: #e5eecc;
+				border: solid 1px #c3c3c3;
+			}
+			
+			#head,
+			#head2 {
+				float: left;
+			}
+			
+			div.panel {
+				height: 120px;
+				display: none;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="head" style="height: 300px;width: 200px;border: 1px solid red;"></div>
+		<div id="head2" style="height: 300px;width: 200px;border: 1px solid red;margin-left: 20px;"></div>
+		<div style="clear: both;">
+			<div class="panel">
+				<p>W3School - 领先的 Web 技术教程站点</p>
+				<p>在 W3School，你可以找到你所需要的所有网站建设教程。</p>
+			</div>
+
+			<p class="flip">请点击这里</p>
+
+			<div class="load1">
+				load加载1
+
+			</div>
+			<a class="ajax-a" href="view/navList.html">1111</a>
+		</div>
+
+		<script>
+			$(function() {
+				$('.load1').click(function() {
+					$('#head').load('view/navList.html .menu-ul')
+
+				})
+
+				$('.ajax-a').click(function(e) {
+					e.preventDefault()
+					var loadHtml = $(this).attr('href');
+					console.log(loadHtml)
+					$.ajax({
+						type: 'get',
+						async: false,
+//						cache: false,
+						url: loadHtml,
+						success: function(html) {
+							alert(html)
+							$('#head2').html(html)
+						}
+					})
+				})
+
+			})
+		</script>
+
+	</body>
+
+</html>

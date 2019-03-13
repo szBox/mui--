@@ -1,0 +1,118 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>我的魔晶</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../../../css/commom.css"/>
+		
+		<script src="../../../js/mui.min.js"></script>
+		<script src="../../../js/jquery-2.1.0.js"></script>
+		<script src="../../../js/rem.js"></script>
+		<script src="../../../js/ajax.js"></script>
+		<script src="../../../js/public.js"></script>
+		<style>
+			.mui-content,body{
+				background: #f9f9f9;
+			}
+			.wallet-top{
+				margin: 0.5rem 0.75rem;
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				background: #fff;
+				padding: 2rem 1.5rem;
+				box-shadow:0 1px 2px rgba(0, 0, 0, .3);
+		
+			}
+			.wallet-top img{
+				width: 2.5rem;
+				height: 2.5rem;
+				margin-right: 0.5rem;
+			}
+			.wallet-top div{
+				flex: 1;
+			}
+			.wallet-top div h3{
+				font-size: 0.9rem;
+			}
+			.wallet-top div p{
+				font-size: 0.8rem;
+				color: #ab956c;
+				font-weight: bold;
+			}
+			
+			.wallet-li{
+				box-shadow:0 1px 2px rgba(0, 0, 0, .3);
+				background: #fff;
+				height: 2.2rem;
+				line-height: 2.2rem;
+				margin:0.5rem 0.75rem;
+			}
+			.wallet-li span{
+				margin-left: 1.5rem;
+			}
+			.wallet-li img{
+				float: right;
+				width: 1.3rem;
+				height: 1.3rem;
+				margin-top: 0.35rem;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">我的魔晶</h1>
+		</header>
+		<div class="mui-content">
+			<div class="wallet-top">
+				<img src="../../../img/Diamonds.png" alt="">
+				<div>
+					<h3>魔晶余额</h3>
+					<p><span class="my-money"></span></p>
+				</div>
+			</div>
+			
+			<div class="wallet-li Zhuan">
+				<span>魔晶转账</span>
+				<img src="../../../img/address_right.png" alt="">
+			</div>
+			<div class="wallet-li ZhuanList">
+				<span>魔晶账变记录</span>
+				<img src="../../../img/address_right.png" alt="">
+			</div>
+		</div>
+		
+		<script type="text/javascript">
+			mui.init()
+			document.addEventListener('plusready',function(){
+				// getMoney()
+			})
+			getMoney()
+			function getMoney(){
+				ajaxGet(identity,{userId:userInfo.userid},function(res){
+					
+					if(res.errno ==0){
+						// plus.nativeUI.closeWaiting();
+						$('.my-money').html(res.data.mojing);
+					}
+				})
+			}
+			
+			mui('body').on('tap', '.Zhuan', function(e) {
+				openView("moZhuan.html","moZhuan.page",{myMojing:$('.my-money').html()}) //转账
+			})
+			.on('tap', '.ZhuanList', function(e) {
+				openView("moZhuanList.html","moZhuanList.page") //提现
+			})
+			
+		</script>
+		
+		
+	</body>
+
+</html>

@@ -1,0 +1,177 @@
+
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../../../css/commom.css"/>
+		
+		<script src="../../../js/mui.min.js"></script>
+		<script src="../../../js/jquery-2.1.0.js"></script>
+		<script src="../../../js/rem.js"></script>
+		<script src="../../../js/ajax.js"></script>
+		<script src="../../../js/mui.pullToRefresh.js"></script>	
+		<script src="../../../js/mui.pullToRefresh.material.js"></script>
+		<script src="../../../js/public.js"></script>
+		
+		<style>
+			.mui-content,body,.ul-list{
+				background: #F4F4F4;
+				touch-action: none;
+			}
+			#slider-y>div{
+				height: 100%;
+			}
+			.mui-table-view:before,.mui-table-view:after{
+				height: 0;
+			}
+			.ul-list li{
+				background: #fff;
+				margin: 0.5rem 0.75rem;
+				border-radius: 5px;
+				padding: 0.75rem;
+			}
+			.status{
+				flex: 1;
+				text-align: right;
+			}
+			.ul-list li>p{
+				margin: 0.2rem 0;
+			}
+			.ul-list li>p:last-child{
+				margin: 0;
+			}
+			.ul-list li>p>span{
+				color: #333;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<div id='slider-y' class="mui-slider-group">
+				<div id="item1" class="mui-slider-item mui-control-content mui-active">
+					<div class="mui-scroll-wrapper">
+						<div class="mui-scroll">
+							<ul class="ul-list mui-table-view mui-table-view-chevron">
+								
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			mui.init({
+				options : {
+					scrollY: true, //是否竖向滚动
+					scrollX: true, //是否横向滚动
+					startX: 0, //初始化时滚动至x
+					startY: 0, //初始化时滚动至y
+					indicators: true, //是否显示滚动条
+					deceleration:0.0006, //阻尼系数,系数越小滑动越灵敏
+				}
+			})
+			mui.plusReady(function() {
+				getList(obj)
+			})
+			
+			$('#slider-y').height($(document).height()-$('.mui-title').height())
+			
+			var obj = {
+				page:1,
+				size:10,
+			}
+			var pages = null,counts = null;
+			
+			function getList(obj){
+				ajaxGet(moZhuanList,{transferType:0,userId:userInfo.userid,page:obj.page,size:obj.size},function(res){
+					console.log(res)
+					var list = ''
+					if(res.errno == 0){
+						if(res.data.list.length>0){
+							counts= res.data.count;
+							for(var i=0; i<res.data.list.length; i++){
+								if(!res.data.list[i].docx||res.data.list[i].docx==''){
+									var bb = ''
+								}else{
+									var bb =`<p>备注：<span>${res.data.list[i].docx}</span></p>`
+								}
+								list+=`<li>
+										<div class="myflex" style="line-height: 1rem;">
+											<span class="day">${res.data.list[i].createDate}</span>
+											
+										</div>
+										<p>
+											收款人：<span>${res.data.list[i].toUserName}</span>
+										</p>
+										<p>
+											转出金额：<span>${res.data.list[i].money}元</span>
+										</p>
+										${bb}
+										
+									</li>`
+							}
+							$('.ul-list').append(list)
+							plus.nativeUI.closeWaiting();
+						}else{
+							var noData = `<div class='no-data no-car'>
+											<img src="../../../img/car_nodata.png" >
+											<p>还没有记录呢</p>
+										</div>`
+							
+							$('.mui-scroll-wrapper').html(noData)
+						}
+						
+					}
+					
+				})
+			}
+			
+			mui('.mui-scroll-wrapper').scroll()
+			
+			//循环初始化所有下拉刷新，上拉加载。
+		
+			mui('#slider-y  .mui-scroll').pullToRefresh({
+				down: {
+						callback: function() {
+							var self = this;
+							setTimeout(function() {
+								console.log('obj',obj)
+								obj.page=1;
+								$('.ul-list li').remove()
+								getList(obj)
+								self.endPullDownToRefresh();
+							}, 1500);
+						}
+				},
+				up: {
+					callback: function() {
+						console.log(Math.ceil(pages/obj.size))
+						var self = this;
+						setTimeout(function() {
+							console.log('obj',obj)
+							obj.page++;
+							// var counts //总条数
+							pages = Math.ceil(counts/obj.size);
+							console.log(counts,pages)
+							if(obj.page<=pages){
+								getList(obj)
+								self.endPullUpToRefresh();
+							}else{
+								 self.endPullUpToRefresh(true);
+							}
+						}, 1500);
+					}
+				}
+			});
+			
+		</script>
+		
+		
+	</body>
+
+</html>

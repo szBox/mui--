@@ -1,0 +1,160 @@
+
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>提现记录</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../../../css/commom.css"/>
+		
+		<script src="../../../js/mui.min.js"></script>
+		<script src="../../../js/jquery-2.1.0.js"></script>
+		<script src="../../../js/rem.js"></script>
+		<script src="../../../js/ajax.js"></script>
+		<script src="../../../js/public.js"></script>
+		
+		<style>
+			.mui-content,body{
+				background: #F4F4F4;
+				border: none;
+				/* background: #2AC845; */
+			}
+			.kidNav{
+				box-shadow:0 0 0 transparent;
+				
+			}
+			.kidNav a.mui-active{
+				border-bottom: 2px solid #ab956c;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">我的订单</h1>
+		</header>
+		
+		<div class="mui-content">
+			<nav class="mui-bar mui-bar-tab kidNav" style="top: 47px;border: none;">
+				<div>
+					<a class="mui-tab-item" data-href="./order0.html" id='order0'>
+						<span class="mui-tab-label">全部<i></i></span>
+					</a>
+					<a class="mui-tab-item" data-href="./order1.html" id="order1">
+						<span class="mui-tab-label">待付款<i></i></span>
+					</a>
+					<a class="mui-tab-item" data-href="./order2.html" id="order2">
+						<span class="mui-tab-label">待发货<i></i></span>
+					</a>
+					<a class="mui-tab-item" data-href="./order3.html" id="order3">
+						<span class="mui-tab-label">待收货<i></i></span>
+					</a>
+					<a class="mui-tab-item" data-href="./order4.html" id="order4">
+						<span class="mui-tab-label">待评价<i></i></span>
+					</a>
+				</div>
+			</nav>
+			
+	
+		
+		
+	
+		</div>
+		<script type="text/javascript">
+			mui.init({
+				options : {
+				 scrollY: true, //是否竖向滚动
+				 scrollX: true, //是否横向滚动
+				 startX: 0, //初始化时滚动至x
+				 startY: 0, //初始化时滚动至y
+				 indicators: false, //是否显示滚动条
+				 deceleration:0.0006, //阻尼系数,系数越小滑动越灵敏
+				 bounce: true //是否启用回弹
+				},
+			})
+			
+			var subPages = ["./order0.html", "./order1.html","./order2.html", "./order3.html","./order4.html"];
+			var subPagesIds = ['order0','order1','order2','order3','order4']
+			var subPageStyle = {
+				top: '100px',
+				bottom: '0'
+			}
+			
+			mui.plusReady(function() {
+				var self = plus.webview.currentWebview();
+				
+// 				//重置返回
+// 				var old_back = mui.back;
+// 				mui.back = function() {
+// 					old_back();
+// 					
+// 				}
+				
+				for(var i = 0; i < subPages.length; i++) {
+					var sub = plus.webview.create(subPages[i], subPagesIds[i], subPageStyle);
+					// 先把所有窗体给隐藏
+					sub.hide();
+					self.append(sub);
+				}
+				// plus.webview.show(subPages[self.orderActive]);
+				
+				// alert(self.orderActive)
+				//底部切換
+				var activeTab = subPages[0];
+				plus.webview.show(subPagesIds[0]);
+				$('#order'+self.orderActive).addClass('mui-active')
+				var targetTab = '';
+				
+				
+				function goOrder(e){
+					var tagPage =e;
+					$('.mui-bar-tab a').removeClass('mui-active');
+					$('.mui-bar-tab a').eq(e).addClass('mui-active');
+					plus.webview.show('order'+tagPage,"fade-in",100);
+				}
+				
+				//goIndex 事件
+				window.addEventListener('goOrder0',function(e){
+					var pageId = e.detail.orderActive;
+					goOrder(pageId)
+					
+					// plus.webview.getWebviewById('order0').reload(true)
+				});
+				window.addEventListener('goOrder1',function(e){
+					var pageId = e.detail.orderActive;
+					plus.webview.getWebviewById('order1').reload(true)
+					goOrder(pageId)
+				});
+				window.addEventListener('goOrder2',function(e){
+					var pageId = e.detail.orderActive;
+					plus.webview.getWebviewById('order2').reload(true)
+					goOrder(pageId)
+				});
+				window.addEventListener('goOrder3',function(e){
+					var pageId = e.detail.orderActive;
+					plus.webview.getWebviewById('order3').reload(true)
+					goOrder(pageId)
+				});
+				window.addEventListener('goOrder4',function(e){
+					var pageId = e.detail.orderActive;
+					plus.webview.getWebviewById('order4').reload(true)
+					goOrder(pageId)
+				});
+				mui('.mui-bar-tab').on('tap', 'a', function(e) {
+					var tagPage =this.getAttribute('id');
+					plus.webview.hide();
+					plus.webview.show(tagPage,"fade-in",100);
+				});
+			
+			
+			})
+			
+		</script>
+		
+		
+	</body>
+
+</html>

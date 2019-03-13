@@ -1,0 +1,456 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/commom.css">
+		<script src="../../js/jquery-2.1.0.js"></script>
+		<script src="../../js/rem.js"></script>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/ajax.js"></script>
+		<script src="../../js/mui.pullToRefresh.js"></script>
+		<script src="../../js/mui.pullToRefresh.material.js"></script>
+		<script src="../../js/public.js"></script>
+		
+		<style>
+			body{
+				touch-action: none;	
+				background: #fff;
+				
+			}
+			.mui-content{
+				overflow-y: scroll;
+				background: #fff;
+			}
+			.mui-scroll-wrapper.scroll-goodsBox{
+				overflow-y: scroll;
+			}
+			.my-lunbo,.mui-slider-group.mui-slider-loop,.mui-slider-item .my-lunbo,.mui-slider-item a,.mui-slider-item a img{
+				height: 8rem;	
+				
+			}
+			.mui-slider-group>div{
+				height: 8rem;
+			}
+			.my-lunbo{
+				touch-action: none;	
+			}
+			.mui-segmented-control .mui-control-item{
+				height: 2rem;
+				line-height: 2rem;
+			}
+			.mui-segmented-control.mui-scroll-wrapper .mui-scroll,
+			#slider-x{
+				height: 2.2rem;
+				/* background: red; */
+			}
+			#slider-x .mui-scroll{
+				width: 100% !important;
+				height: 2.2rem;
+			}
+			#slider-x .mui-scroll a{
+				height: 2.2rem;
+			}
+			.mui-slider .mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active{
+				border-bottom: 2px solid coral;
+				color: coral;
+			}
+			#slider{
+				/* overflow-y: scroll; */
+				top: 8rem;
+		
+				
+			}
+			
+			.navFixed{
+				position: fixed;
+				top:0;
+				left:0;
+				z-index:99;
+			}
+			.ul-goods{
+				
+			}
+				
+			.noMore-div{
+				text-align: center;
+				margin: 0 0 1rem;
+			}
+			.ul-goods li{
+				margin:0.5rem;
+				padding:0.5rem;
+				box-shadow:0px 2px 5px rgba(0,0,0,0.3);
+				border-radius:0.25rem;
+		
+			}
+			.good-img{
+				height: 14rem !important;
+			}
+			.good-div h1{
+				display: flex;
+				flex-direction: row;
+				margin: 0 0 3px;
+			}
+			.good-div h1 .hot{
+				font-weight: bold;
+				padding:1px 2px;
+				margin:0 0.3rem 0.3rem 0;
+				height:0.75rem;
+				line-height:0.75rem;
+				box-shadow:0px 2px 5px rgba(0,0,0,0.3);
+				border:1px solid #ab956c;
+				color:#ab956c;
+				font-size:0.6rem;
+			}
+			.good-div h1 .good-name{
+				height: 1.6rem;
+				overflow:hidden;
+				text-overflow:ellipsis;
+				display:-webkit-box;
+				word-break:break-all;
+				line-height:0.85rem;
+				font-weight:bold;
+				font-size:0.8rem;
+				-webkit-line-clamp:2;
+				flex: 1;
+			}
+			.good-div h2{
+				margin: 0;
+				font-size:0.65rem;
+				color:#CCC;
+			}
+			.good-div h3{
+				margin: 2px 0;
+			}
+			.good-div h3 img{
+				width: 1rem !important;
+				height: 1rem !important;
+			}
+			.good-div h3 span{
+				color:#f48a4e;
+				font-size:0.65rem;
+				margin:0 0.25rem;
+		
+					
+			}
+			.price-div img{
+				width: 1rem !important;
+				height: 1rem !important;
+			}
+			.price-div img.vip-img{
+				width: 2.2rem !important;
+				height: 1rem;
+				margin: 0 0.5rem;
+			}
+			.price-div .now-money{
+				color:#474a51;
+				font-size:1rem;
+				font-weight:600;
+		
+			}
+			.price-div .now-baoyou{
+				margin:0 0.5rem 0 0;
+				height:1rem;
+				line-height:1rem;
+				border-radius:3px;
+				padding: 1px;
+				border:1px solid #ab956c;
+				color:#ab956c;
+				font-size:0.6rem;
+		
+			}
+			.buy{
+				position: absolute;
+				right: 0.4rem;
+				bottom: 0.4rem;
+				border-radius:3px;
+				text-align:center;
+			
+				background:#f48a4e;
+				color:#fff;
+				font-size:0.6rem;
+				padding:2px 5px;
+			
+			}
+			.mui-table-view-chevron .mui-table-view-cell{
+				padding-right: 0.75rem;
+			}
+			#slider-y .mui-scroll-wrapper{
+			
+			}
+			#slider-y{
+				border: none;
+				margin-top: 0.5rem;
+			}
+			.mui-slider .mui-segmented-control.mui-segmented-control-inverted~.mui-slider-group .mui-slider-item{
+				border: none;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<!-- <div id="refreshContainer"> -->
+				<!-- <div class="mui-scroll-wrapper"> -->
+					<div class="mui-slider my-lunbo">
+					    <div class="mui-slider-group mui-slider-loop">
+						<!--支持循环，需要重复图片节点-->
+					    </div>
+					    <div class="mui-slider-indicator my-lunbo-index">
+							
+					    </div>
+					</div>
+					
+					<!-- 区域滚动 -->
+					
+					<div id="slider" class="mui-slider mui-fullscreen">
+						<div id="slider-x" style="" class="mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
+							<div class="mui-scroll">
+			
+							</div>
+						</div>
+						<div id='slider-y' class="mui-slider-group">
+							<div id="item1" class="mui-slider-item mui-control-content">
+								<div class="mui-scroll-wrapper">
+									<div class="mui-scroll">
+										<ul class="mui-table-view mui-table-view-chevron">
+										
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					
+					
+					
+
+			<!-- </div> -->
+			
+			
+		
+		</div>
+		<script type="text/javascript">
+			mui.init({
+				options : {
+				 scrollY: true, //是否竖向滚动
+				 scrollX: true, //是否横向滚动
+				 startX: 0, //初始化时滚动至x
+				 startY: 0, //初始化时滚动至y
+				 indicators: false, //是否显示滚动条
+				 deceleration:0.0006, //阻尼系数,系数越小滑动越灵敏
+				 bounce: true //是否启用回弹
+				},
+			})
+			// $('.mui-content, body').height($(document).height())
+			//监听 my-scroll-x 滚动
+// 			$('#slider .mui-scroll-wrapper').scroll(function() {
+// 				
+// 		        var scroH = $('#slider .ul-goods li').eq(0).position();  //滚动高度
+// 		console.log(scroH)
+// 				var contentH = $('.my-lunbo').height();  //内容高度
+// 		        if(scroH >=contentH){  //距离顶部大于100px时
+// 					console.log('到了')
+// 					$('.my-scroll-x').addClass('navFixed')
+// 					$('.my-list-box').css({marginTop:'2rem'})
+// 		        }else{
+// 					$('.my-scroll-x').removeClass('navFixed')
+// 					$('.my-list-box').css({marginTop:'0'})
+// 				}
+// 			})
+// 			setTimeout(function(){
+// 				var gallery = mui('.my-lunbo.mui-slider');
+// 				gallery.slider({
+// 					 interval:3000//自动轮播周期，若为0则不自动播放，默认为0；
+// 				});
+// 		
+// 			},1000)
+			
+		var indexApi = host+'wx/home/index';
+		var lists = host+'wx/goods/list';
+		var navObj = [];
+		
+		mui.ajax(indexApi,{
+			data:{},
+			dataType:'json',//服务器返回json格式数据
+			type:'get',//HTTP请求类型
+			timeout:10000,//超时时间设置为10秒；
+			headers:{'Content-Type':'application/x-www-form-urlencoded'},	              
+			success:function(res){
+				//服务器返回响应，根据响应结果，分析是否登录成功；
+				console.log('res',res)
+				var sliderX = '';
+				var sliderY = '';
+				
+				var banner = '',bannerFirst ='',bannerLast = '',bannerIndex = '';
+				/*获取 轮播数据*/
+				for(var i=0; i<res.data.banner.length;i++){
+					bannerFirst='<div good-id="'+res.data.banner[res.data.banner.length-1].link+'" class="mui-slider-item mui-slider-item-duplicate" style="height:8rem">'+
+									'<a href="#"><img src="'+res.data.banner[res.data.banner.length-1].url+'" /></a>'+
+								'</div>';
+					bannerLast='<div good-id="'+res.data.banner[0].link+'" class="mui-slider-item mui-slider-item-duplicate" style="height:8rem">'+
+									'<a href="#"><img src="'+res.data.banner[0].url+'" /></a>'+
+								'</div>';			
+					banner+='<div good-id="'+res.data.banner[i].link+'"  class="mui-slider-item" style="height:8rem"><a href="#"><img src="'+res.data.banner[i].url+'" /></a></div>';
+					bannerIndex+='<div class="mui-indicator"></div>'
+				}
+				$('.my-lunbo .mui-slider-group').html(bannerFirst+banner+bannerLast)
+				$('.my-lunbo-index').html(bannerIndex)
+				
+				for(var i=0; i<res.data.floorGoodsList.length; i++){
+					sliderX+=`<a nav-id="${res.data.floorGoodsList[i].id}" class="mui-control-item" href="#item${res.data.floorGoodsList[i].id}">
+								${res.data.floorGoodsList[i].name}
+							</a>`;
+					sliderY+=`<div id="item${res.data.floorGoodsList[i].id}" class="mui-slider-item mui-control-content">
+								<div class="mui-scroll-wrapper">
+									<div class="mui-scroll">
+										<ul class="ul-goods mui-table-view mui-table-view-chevron">
+											
+										</ul>
+									</div>
+								</div>
+							</div>`;
+					navObj.push({
+						id:res.data.floorGoodsList[i].id,
+						page:1,
+						size:10,
+						list:'',
+						counts:'',//总size
+						pages:'',//总pages
+					})
+					
+				}
+				$('#slider-x .mui-scroll').html(sliderX)
+				$('#slider-x .mui-scroll a').eq(0).addClass('mui-active')
+				$('#slider-y').html(sliderY)
+				var gallery = mui('.my-lunbo.mui-slider');
+				gallery.slider({
+					 interval:3000//自动轮播周期，若为0则不自动播放，默认为0；
+				});
+				$('#slider-y>div,.my-lunbo-index>div').eq(0).addClass('mui-active')
+				mui('#slider').slider();
+				for(var i=0; i<navObj.length; i++){
+					list(navObj[i])
+					mui('.mui-scroll-wrapper').scroll() 
+				}
+				myPull(navObj)
+			},
+			error:function(xhr,type,errorThrown){
+				//异常处理；
+				console.log(type);
+				
+			}
+		});
+		
+		function list(obj){
+			mui.ajax(lists,{
+				data:{categoryId:obj.id,page:obj.page,size:obj.size},
+				dataType:'json',//服务器返回json格式数据
+				type:'get',//HTTP请求类型
+				timeout:60000,//超时时间设置为10秒；
+				headers:{'Content-Type':'application/x-www-form-urlencoded'},	              
+				success:function(res){
+					//服务器返回响应，根据响应结果，分析是否登录成功；
+					console.log('列表--',res.data.goodsList.length)
+						for(var i=0; i<res.data.goodsList.length; i++){
+							obj.list+='<li class="mui-table-view-cell" good-id="'+res.data.goodsList[i].id+'">'+
+									'<img class="good-img" src="'+res.data.goodsList[i].picUrl+'"/>'+
+									'<div class="good-div">'+
+										'<h1><span class="hot">活动</span><b class="good-name">'+res.data.goodsList[i].name+'</b></h1>'+
+										'<h2>'+res.data.goodsList[i].brief+'</h2>'+
+										'<h3><img src="../../img/market_tag.png"/><span>￥'+res.data.goodsList[i].counterPrice+'</span><span>市场价</span></h3>'+
+										'<div class="price-div">'+
+											'<img src="../../img/member_tag.png"/>'+
+											'<span class="now-money">￥'+res.data.goodsList[i].retailPrice+'</span>'+
+											'<img class="vip-img" src="../../img/memeber_price.png"/>'+
+											'<span class="now-baoyou">包邮</span>'+
+										'</div>'+
+									'</div>'+
+									'<div class="buy">立刻购买</div>'+
+							'</li>';
+							obj.counts=res.data.count;
+							obj.pages=Math.ceil(res.data.count/obj.size);;
+							$('#item'+obj.id).find('ul').html(obj.list)
+							
+						}
+					console.log('l;;;',navObj)
+					
+				
+				},
+				error:function(xhr,type,errorThrown){
+					//异常处理；
+					console.log(type);
+				}
+			});
+		}
+		function myPull(obj){
+			//循环初始化所有下拉刷新，上拉加载。
+			$.each(document.querySelectorAll('#slider-y  .mui-scroll'), function(index, pullRefreshEl) {
+				mui(pullRefreshEl).pullToRefresh({
+					down: {
+						callback: function() {
+							var self = this;
+							setTimeout(function() {
+								console.log('obj',obj)
+								obj[index].page=1;
+								obj[index].list='';
+								$('#item'+obj[index].id).find('ul li').remove()
+								list(obj[index])
+								self.endPullDownToRefresh();
+							}, 1500);
+						}
+					},
+					up: {
+						callback: function() {
+							var self = this;
+							console.log('self',self,index)
+							setTimeout(function() {
+								console.log('obj',obj[index])
+								obj[index].page++;
+								if(obj[index].page<=obj[index].pages){
+									list(obj[index])
+									self.endPullUpToRefresh();
+								}else{
+									 self.endPullUpToRefresh(true);
+								}
+								
+							}, 1500);
+						}
+					}
+				});
+			});
+		
+			
+		}
+		
+			
+		// 父页面自定义页面刷新事件 
+		window.addEventListener("myRefresh", function (e) {
+			// 重新获取数据或触发刷新
+			// plus.webview.currentWebview().reload();
+//			     location.reload();  
+		});
+		
+		mui('body').on('tap', '.ul-goods li', function(e) {
+//				参数id
+			plus.nativeUI.showWaiting();
+			var goodId = $(this).attr('good-id');
+			openView('good_info.html','good_info.page',{goodId:goodId})
+		})
+		.on('tap', '.my-lunbo .mui-slider-item', function(e) {
+//				参数id
+			plus.nativeUI.showWaiting();
+			var goodId = $(this).attr('good-id').split('?id=')[1];
+			openView('good_info.html','good_info.page',{goodId:goodId})
+		})
+
+		</script>
+		
+		
+	</body>
+
+</html>

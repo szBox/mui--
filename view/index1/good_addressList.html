@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>地址管理</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		
+		<link rel="stylesheet" type="text/css" href="../../css/commom.css"/>
+		
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/jquery-2.1.0.js"></script>
+		<script src="../../js/rem.js"></script>
+		<script src="../../js/ajax.js"></script>
+		
+		
+		<script src="../../js/public.js"></script>
+		<style>
+			.mui-content{
+				padding-bottom: 3rem;
+				margin-bottom: 1rem;
+			}
+			.mui-content,body{
+				background: #f9f9f9;
+			}
+			.mui-input-group:before,.mui-input-group .mui-input-row:after,.mui-input-group:after{
+				height: 0;
+			}
+			.mui-input-row {
+				margin: 0.75rem 0.75rem;
+				border-bottom: 1px solid #c8c7cc;
+				margin-bottom: 0.5rem;
+				background: #fff;
+			}
+			.no-data{
+				display: none;
+				position: fixed;
+				top: 7rem;
+				width: 100%;
+				text-align: center;
+			}
+			.no-data img{
+				width: 6.5rem;
+				height: 6.5rem;
+			}
+			.no-data p{
+				color: #999;
+				font-size: 0.75rem;
+			}
+			.add{
+				position: fixed;
+				bottom: 0.75rem;
+				background: #A9A9A9;
+				width: calc(100% - 1.5rem);
+				left: 0.75rem;
+				color: #fff;
+				font-size: 0.75rem;
+				text-align:  center;
+				line-height: 2.2rem;
+				border-radius: 1rem;
+			}
+			.address-list{
+				background: #fff;
+				padding: 0.75rem;
+				
+			}
+			.name-box{
+				width: 2.5rem;
+			}
+			.name-box h3{
+				font-size: 0.75rem;
+			}
+			.name-box p{
+				font-size: 0.6rem;
+				color:#b4282d;
+				width:1.8rem;
+				height: 1rem;
+				line-height: 1rem;
+				text-align: center;
+				border:1px solid #b4282d;
+
+			}
+			.phone-box{
+				flex: 1;
+				margin: 0 0.75rem 0 0.75rem;
+			}
+			.address-text{
+				-webkit-line-clamp: 2;
+				line-height: 0.8rem;
+			}
+			.close{
+				width: 1.2rem;
+			}
+			.address-tips{
+				height: 0.3rem;
+				background: url('../../img/address-bg-bd.png') 0 0 repeat-x;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">地址管理</h1>
+		</header>
+		<div class="mui-content">
+			<div class='no-data no-car'>
+				<img src="../../img/no-address.png" >
+				<p>收获地址在哪里</p>
+			</div>
+			<div class="address-box">
+				
+				
+			</div>
+		</div>
+		<div class='add'>新建地址</div>
+		<script type="text/javascript">
+			mui.init()
+			document.addEventListener('plusready',function(){
+				parentGet()
+				mui('body').on('tap', '.add', function(e) {
+					openView("../index3/address/addressAdd.html","addressAdd.page") //添加地址
+				})
+				.on('tap', '.address-list', function(e) {
+					var doc = $(this).attr('data-id');
+					var self=plus.webview.currentWebview();          //获取当前窗口的WebviewObject对象，即B  
+					var selfParent=self.opener();                           //获取当前窗口的创建者，即A  
+					selfParent.evalJS("Doc('"+doc+"')");        //执行父窗口中的方法  A中的showAG方法  
+					self.close();//关闭B   
+
+				})
+			})
+			function parentGet(){
+				ajaxGet(addressList,{},function(res){
+					if(res.errno ==0){
+						var tips = `<div class='address-tips'></div>`;
+						var list = '';
+						if(res.data.length>0){
+							
+							for(var i=0; i<res.data.length; i++){
+								if(res.data[i].isDefault==true){
+									var init =`<p class="address-init">默认</p>`
+									// var initId = 1
+								}else{
+									var init =`<p class="address-init" style="display:none;"></p>`
+									// var initId = 0
+								}
+								list+=`<div class='address-list myflex' data-id="${res.data[i].id}">
+										<div class="name-box">
+											<h3 data-init="${res.data[i].isDefault}">${res.data[i].name}</h3>
+											${init}
+										</div>
+										<div class="phone-box">
+											<h3>${res.data[i].mobile}</h3>
+											<p class="address-text ellipsis">${res.data[i].detailedAddress}</p>
+										</div>
+									</div>`
+							}
+							$('.address-box').html(tips+list).show()
+							$('.no-data').hide()
+						}else{
+							$('.no-data').show()
+						}
+					}
+				})
+			}
+			
+		</script>
+		
+		
+	</body>
+
+</html>

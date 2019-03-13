@@ -1,0 +1,213 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>提现</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../../../css/commom.css"/>
+		
+		<script src="../../../js/mui.min.js"></script>
+		<script src="../../../js/jquery-2.1.0.js"></script>
+		<script src="../../../js/rem.js"></script>
+		<script src="../../../js/ajax.js"></script>
+		<script src="../../../js/public.js"></script>
+		
+		<style>
+			.mui-content,body{
+				background: #fff;
+			}
+			.mui-content>div{
+				padding: 1rem;
+			}
+			.form-view{
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				
+			}
+			.form-view>span{
+				color: #919191;
+				font-size: 0.75rem;
+				width: 3rem;
+			}
+			.form-view>div{
+				flex: 1;
+			}
+			.form-view>div>input{
+				border-bottom:1px solid #EAEAEA;
+		
+			}
+			.inpH{
+				height: 2rem;
+				border: none;
+			}
+			.form-yes{
+				background:#AB956D;
+				color:#fff;
+				border-radius:1rem;
+				line-height:2rem;
+				font-size:0.75rem;
+				text-align: center;
+				margin:2rem 2rem 0;
+		
+			}
+			.tixian-tips p{
+				font-size:0.65rem;
+				color:#919191;
+				line-height:1.5rem;
+		
+			}
+			.money-on{
+				color: #AB956D;line-height: 2rem;font-weight: 600;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">提现</h1>
+		</header>
+		<div class="mui-content">
+			<div>
+				<div class="form-view" style="margin-bottom: 1rem;">
+					<span class="" style="width: auto;">收款户名</span>
+					<div style="width: calc(100% - 92px)">
+						<input type='text' class='bankUser' maxlength="8" style="width:100%;padding-right:10px;float: left;"  placeholder="" />
+					</div>
+				</div>
+				<div class="form-view" style="margin-bottom: 1rem;">
+					<span class="" style="width: auto;">收款账号</span>
+					<div style="width: calc(100% - 92px)">
+						<input class="bankNo" type='text'  style="width:100%;padding-right:10px;float: left;"  placeholder="" />
+					</div>
+				</div>
+				<div class="form-view" style="margin-bottom: 1rem;">
+					<span class="" style="width: auto;">开户银行</span>
+					<div style="width: calc(100% - 92px)">
+						<input class='bankName' type='text'  style="width:100%;padding-right:10px;float: left;"  placeholder="" />
+					</div>
+				</div>
+				<div class="form-view">
+					<span class="">当前余额</span>
+					<div>
+						<span style="margin-left: 0.5rem; color: #AB956D;line-height: 2rem;font-weight: 600;"><i class="money-on"></i>元</span>
+					</div>
+				</div>
+				
+				<div class="form-view" style="margin-bottom: 1rem;">
+					<span class="">提现金额</span>
+					<div>
+						<input type='number' class="money-tixian" style="width: calc(100% - 0.7rem);padding-right:0.5rem;float: left;text-align: right;color: #AB956D;font-weight: 600;"  placeholder="" />
+						<span style="color: #AB956D;line-height: 2.2rem;font-weight: 600;float: left;text-align: right;width: 0.7rem;">元</span>
+					</div>
+				</div>
+				
+				<div class="form-view">
+					<span class="">验证码</span>
+					<div>
+						<input class='inpH yzm' maxlength="6" readonly name="yzm" style="width: calc(100% - 4rem);float: left;"  placeholder="" />
+						<span class='getYzm yzmText'   style="color: #AB956D;font-weight: 600;font-size:0.7rem;float: left;width:4rem;line-height: 2rem;">获取验证码</span>
+					</div>
+				</div>
+						
+				<div class="form-yes">发起提现</div>
+			</div>
+			
+			<div class='tixian-tips'>
+				<p>提现时间：周一到周五，上午10：00-下午17：00</p>
+				<p>提现额度：最低100起,以100的倍数提</p>
+				<p>提现每笔收取6.8%的手续费</p>
+			</div>
+	
+		
+		
+	
+		</div>
+		<script type="text/javascript">
+			mui.init()
+			
+			
+			document.addEventListener('plusready',function(){
+				var self = plus.webview.currentWebview();
+				$('.money-on').html(self.myMoney)
+			
+				$('.money-tixian').on('input',function(){
+					var v = Number($(this).val());
+					if(v > self.myMoney){
+						$(this).val(self.myMoney);
+					}else if(v < 1){
+						$(this).val('');
+					}
+				});
+				var timer = null,time=61;
+				mui('body').on('tap', '.getYzm', function(e) {
+					$('input').blur()
+					ajaxGet(sendYzmData,{mobile:userInfo.mobile},function(res){
+						if(res.errno==0){
+							mui.toast('验证码已发送')
+							$(".yzm").removeAttr("readOnly");
+							$(this).removeClass('getYzm')
+							//获取验证码
+							timer = setInterval(function () {
+							  time--;
+							  $('.yzmText').html(time+'秒')
+							  if (time <= 0) {
+								$('.yzmText').addClass('getYzm')
+								clearInterval(timer)
+								 $('.yzmText').html('重新发送')
+								 time=61
+							  }
+							}, 1000)
+						}
+					})
+				})
+				.on('tap', '.form-yes', function(e) {
+					$('input').blur()
+					if(!$('.bankUser').val()){
+						mui.toast('请输入收款户名')
+					}else if(!$('.bankNo').val()){
+						mui.toast('请输入收款账号')
+					}else if(!$('.bankName').val()){
+						mui.toast('请输入开户银行')
+					}else if(!$('.money-tixian').val()){
+						mui.toast('请输入提现金额')
+					}else if(Number($('.money-tixian').val())%100!=0){
+						mui.toast('提现金额必须为100的倍数')
+					}else if(!$('.yzm').val()){
+						mui.toast('请输入验证码')
+					}
+					else{
+						ajaxGet(tixian,{
+							userId:userInfo.userid,
+							money:$('.money-tixian').val(),
+							bankNo:$('.bankNo').val(),
+							bankName:$('.bankName').val(),
+							phone:userInfo.mobile,
+							validcode:$('.yzm').val(),
+							bankUser:$('.bankUser').val()
+						},function(res){
+							console.log(res)
+							if(res.errno == 0){
+								 mui.alert('操作成功', '温馨提示', function() {
+									var self=plus.webview.currentWebview();          //获取当前窗口的WebviewObject对象，即B  
+									var selfParent=self.opener();                           //获取当前窗口的创建者，即A  
+									selfParent.evalJS("getMoney()");        //执行父窗口中的方法  A中的showAG方法  
+									self.close();//关闭B  
+								},'div');
+							}else{
+								mui.toast(res.errmsg)
+							}
+						})
+					}
+				})
+			
+			})
+		</script>
+		
+		
+	</body>
+
+</html>

@@ -1,0 +1,395 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../../css/commom.css"/>
+		<script src="../../js/mui.min.js"></script>
+		
+		<script src="../../js/jquery-2.1.0.js"></script>
+		<script src="../../js/rem.js"></script>
+		<script src="../../js/ajax.js"></script>
+		<script src="../../js/public.js"></script>
+		
+		<style>
+			.user-top{
+				background: #ab956d;
+				padding: 0.75rem;
+				height: 5rem;
+			}
+			.user-top>div{
+				display: none;
+			}
+			.user{
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				
+			}
+			.user img{
+				width: 3.5rem;
+				height: 3.5rem;
+				border-radius: 50%;
+				
+			}
+			.user>div{
+				flex: 1;
+				color: #fff;
+				margin-left: 0.75rem;
+			}
+			.user h3{
+				font-size: 0.8rem;
+				color: #fff;
+			}
+			.user>h3{
+				font-size: 0.8rem;
+				color: #fff;
+				margin-left: 0.75rem;
+			}
+			.user p{
+				font-size: 0.7rem;
+				color: #fff;
+			}
+			.dalao{
+				color: #fff;
+				display: block;
+				width: 15rem;
+				margin-top: -0.8rem;
+				margin-left: 1rem;
+			}
+			.dalao>span{
+				background: #ccc;
+				color: #666;
+				border-radius: 10px;
+				padding: 3px 10px;
+			}
+			.dalao>span.dalao-yes{
+				color: #AF7A17;
+				background: -webkit-linear-gradient(#f8f0d8, #dabb70,#f5e29e); /* Safari 5.1 - 6.0 */
+		/* 		background: -o-linear-gradient(red, blue); /* Opera 11.1 - 12.0 */
+				/*background: -moz-linear-gradient(red, blue); /* Firefox 3.6 - 15 */ 
+				background: linear-gradient(#f8f0d8, #dabb70,#f5e29e); /* 标准的语法 */
+			}
+			.order-box h3,.server-box h3,.toll-box h3{
+				padding:0.75rem;
+				margin: 0;
+				
+			}
+			.order-box h3{
+				background: #fff;
+			}
+			.order,.server,.toll{
+				display: flex;
+				flex-direction: row;
+				background: #fff;
+			}
+			
+			.order-item,.server-item,.toll-item{
+				width: 20%;
+				text-align: center;
+				margin: 0.75rem 0 0.5rem;
+			}
+			.order-item,.server-item{
+				width: 25%;
+				margin: 0.5rem 0;
+			}
+			.order-item img,.server-item img,.toll-item img{
+				width: 1.2rem;
+				height: 1.2rem;
+			}
+			.order-item p,.server-item p,.toll-item p{
+				color: #555;
+				font-size: 0.6rem;
+				margin-top: 0.2rem;
+			}
+			.Esc{
+				margin-top:0.75rem;
+				height:2.5rem;
+				width:100%;
+				line-height:2.5rem;
+				text-align:center;
+				background:#fff;
+				color:red;
+				font-size:0.75rem;
+			}
+		</style>
+			
+		
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<div class="user-top">
+				<div class="user-yes">
+					<div class="user">
+						<img style="min-width: 3.5rem;min-height: 3.5rem;"  src="" alt="">
+						<div>
+							<h3></h3>
+							<p class='identity'></p>
+						</div>
+						<h6  class="dalao dalaoIng" style="display: none;"></h6>
+					</div>
+				</div>
+				
+				<div class="user-no">
+					<div class="user">
+						<img class="go-login" src="../../img/user-no.png" alt="">
+						<h3 class='go-login'>点击登陆</h3>
+					</div>
+				</div>
+				
+			</div>
+			
+			<div class='order-box'>
+				<h3 class="ov  order-all" style="line-height: 1rem;">
+					<span class="lf">我的订单</span>
+					<img class="rt my-icon" style="width: 1rem;height: 1rem;" src="../../img/goright.png" >
+				</h3>
+				<div class="order">
+					<div class="order-item order1">
+						<img src="../../img/pendpay.png" >
+						<p>待付款</p>
+					</div>
+					<div class="order-item order2">
+						<img src="../../img/send.png" >
+						<p>待发货</p>
+					</div>
+					<div class="order-item order3">
+						<img src="../../img/receive.png" >
+						<p>待收货</p>
+					</div>
+					<div class="order-item order4">
+						<img src="../../img/comment.png" >
+						<p>待评价</p>
+					</div>
+				</div>
+			</div>
+			
+			<div class='server-box'>
+				<h3 style>核心服务</h3>
+				<div class="server">
+					<div class="server-item server-wallet">
+						<img src="../../img/coupon.png" >
+						<p>钱包</p>
+					</div>
+					<div class="server-item">
+						<img src="../../img/icon_collect.png" >
+						<p>商品收藏</p>
+					</div>
+					<div class="server-item">
+						<img src="../../img/footprint.png" >
+						<p>浏览足迹</p>
+					</div>
+					<!-- <div class="server-item">
+						<img src="../../img/group.png" >
+						<p>我的拼团</p>
+					</div> -->
+					<div class="server-item server-yaoqin">
+						<img src="../../img/yaoqing.png" >
+						<p>邀请好友</p>
+					</div>
+				</div>
+			</div>
+			
+			<div class='toll-box'>
+				<h3>必备工具</h3>
+				<div class="toll">
+					<div class="toll-item tool-address">
+						<img src="../../img/address.png" >
+						<p>地址管理</p>
+					</div>
+					<div class="toll-item">
+						<img src="../../img/mobile.png" >
+						<p>绑定手机</p>
+					</div>
+					<div class="toll-item toll-suggest">
+						<img src="../../img/feedback.png" >
+						<p>意见反馈</p>
+					</div>
+					<div class="toll-item">
+						<img src="../../img/customer.png" >
+						<p>联系客服</p>
+					</div>
+					<div class="toll-item toll-about">
+						<img src="../../img/about_us.png" >
+						<p>关于我们</p>
+					</div>
+				</div>
+			</div>
+			
+			<div class="Esc" style="display: none;">退出登陆</div>
+			
+		</div>
+		<script type="text/javascript">
+			mui.init()
+			//获取父页面的webview对象
+			document.addEventListener('plusready',function(){
+// 				var pageinit = mui.preload({
+// 					url:'./order/orderList.html',
+// 					id:'orderList.page',//默认使用当前页面的url作为id
+// 					styles:{},//窗口参数
+// 					extras:{}//自定义扩展参数
+// 				});
+				
+				/*获取登陆情况*/
+				if(isLogin=='false' ||  isLogin==null){
+					$('.user-no').show()
+				}else{
+					$('.user-yes img').attr('src',userInfo.avatarUrl);
+					$('.user-yes h3').html(userInfo.nickName);
+					/*获取身份*/
+					ajaxGet(identity,{userId:userInfo.userid},function(res){
+						if(res.errno==501){
+							$('.user-no').show()
+							$('.user-yes,.Esc').hide();
+							localStorage.clear()
+						}
+						if(res.errno ==0){
+							res.data.identity==null?$('.identity').html('游客'):$('.user-yes p').html(res.data.identity);
+							if(res.data.aistatus==0||res.data.aistatus==2){
+								$('.dalao').show().html('<span class="dalao-0">申请成为推广大使</span>')
+							}else if(res.data.aistatus==1){
+								$('.dalao').show().html('<span class="dalao-yes">语蔚来AI推广大使</span>')
+								$('.dalao').removeClass('dalaoIng')
+							}else if(res.data.aistatus==4){
+								$('.dalao').show().html('<span class="dalao-4">推广大使审核中</span>')
+								$('.dalao').removeClass('dalaoIng')
+							}
+						}
+					})
+					$('.user-yes').show();
+					$('.Esc').show()
+				}
+				mui('body').on('tap', '.Esc', function(e) {
+					var parentPage = plus.webview.getWebviewById("index");
+					//定义自定义事件openMask，通知父页面的打开遮罩蒙板
+					mui.fire(parentPage, 'openMask', {});
+					
+					var btnArray = ['是', '否'];
+				mui.confirm('退出登陆？', '温馨提示', btnArray, function(e) {
+					if (e.index == 0) {
+						mui.fire(parentPage,'closeMask', {flag:true});
+						mui.toast('退出成功')
+						plus.webview.getWebviewById('index2').reload(true)
+						$('.Esc,.user-yes').hide()
+						$('.user-no').show()
+						isLogin = null;
+						localStorage.clear()
+						
+					} else {
+						//定义closeMask事件，通知父页面来关闭遮罩蒙板
+						mui.fire(parentPage,  'closeMask', {flag:true});
+					}
+				},'div')
+				})
+				
+				
+				mui('body').on('tap', '.tool-address', function(e) {
+					if(isLogin==false ||  isLogin==null){
+						openView("../auth/login.html","login.page")
+					}else{
+						plus.nativeUI.showWaiting();
+						openView("./address/addressList.html","addressList.page")
+					}
+				})
+				.on('tap', '.order-all', function(e) {
+					if(isLogin==false ||  isLogin==null){
+						openView("../auth/login.html","login.page")
+					}else{
+						plus.nativeUI.showWaiting();
+// 						var parentPage = plus.webview.getWebviewById("orderList.page"); 
+// 						mui.fire(parentPage,'goOrder0',{orderActive:"0"});
+						openView("./order/orderList2.html","orderList2.page",{orderActive:0})
+					}
+				})
+				.on('tap', '.order1', function(e) {
+					if(isLogin==false ||  isLogin==null){
+						openView("../auth/login.html","login.page")
+					}else{
+						plus.nativeUI.showWaiting();
+// 						var parentPage = plus.webview.getWebviewById("orderList.page"); 
+// 						mui.fire(parentPage,'goOrder1',{orderActive:"1"});
+						openView("./order/orderList2.html","orderList2.page",{orderActive:1})
+					}
+				})
+				.on('tap', '.order2', function(e) {
+					if(isLogin==false ||  isLogin==null){
+						openView("../auth/login.html","login.page")
+					}else{
+						plus.nativeUI.showWaiting();
+// 						var parentPage = plus.webview.getWebviewById("orderList.page"); 
+// 						mui.fire(parentPage,'goOrder2',{orderActive:"2"});
+						openView("./order/orderList2.html","orderList2.page",{orderActive:2})
+					}
+				})
+				.on('tap', '.order3', function(e) {
+					if(isLogin==false ||  isLogin==null){
+						openView("../auth/login.html","login.page")
+					}else{
+						plus.nativeUI.showWaiting();
+// 						var parentPage = plus.webview.getWebviewById("orderList.page"); 
+// 						mui.fire(parentPage,'goOrder3',{orderActive:"3"});
+						openView("./order/orderList2.html","orderList2.page",{orderActive:3})
+					}
+				})
+				.on('tap', '.order4', function(e) {
+					if(isLogin==false ||  isLogin==null){
+						openView("../auth/login.html","login.page")
+					}else{
+						plus.nativeUI.showWaiting();
+// 						var parentPage = plus.webview.getWebviewById("orderList.page"); 
+// 						mui.fire(parentPage,'goOrder4',{orderActive:"4"});
+						openView("./order/orderList2.html","orderList2.page",{orderActive:4})
+					}
+				})
+				.on('tap', '.toll-about', function(e) {
+					openView("aboutUs.html","aboutUs.page")
+				})
+				.on('tap', '.toll-suggest', function(e) {
+					if(isLogin==false ||  isLogin==null){
+						openView("../auth/login.html","login.page")
+					}else{
+						openView("suggest.html","suggest.page")
+					}
+				})
+				.on('tap', '.server-wallet', function(e) {
+					if(isLogin==false ||  isLogin==null){
+						openView("../auth/login.html","login.page")
+					}else{
+						plus.nativeUI.showWaiting();
+						openView("./wallet/wallet.html","wallet.page")
+					}
+				})
+				.on('tap', '.server-yaoqin', function(e) {
+					if(isLogin==false ||  isLogin==null){
+						openView("../auth/login.html","login.page")
+					}else{
+						openView("./inviteCode.html","inviteCode.page")
+					}
+				})
+				
+				.on('tap', '.go-login', function(e) {
+					openView("../auth/login.html","login.page") 
+				})
+				.on('tap', '.dalaoIng', function(e) {
+					ajaxGet(dalaoReg,{userId:userInfo.userid},function(res){
+						console.log(res)
+						if(res.errno==0){
+							$('.dalao').removeClass('dalaoIng')
+						}else{
+							mui.toast(res.errmsg)
+						}
+					})
+				})
+			})
+			
+		
+		</script>
+		
+		
+	</body>
+
+</html>

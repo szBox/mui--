@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>编辑地址</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../../../css/mui.poppicker.css"/>
+		<link rel="stylesheet" type="text/css" href="../../../css/mui.picker.css"/>
+		<link rel="stylesheet" type="text/css" href="../../../css/commom.css"/>
+		
+		<script src="../../../js/mui.min.js"></script>
+		<script src="../../../js/jquery-2.1.0.js"></script>
+		<script src="../../../js/rem.js"></script>
+		<script src="../../../js/ajax.js"></script>
+		
+		<script src="../../../js/mui.picker.js"></script>
+		<script src="../../../js/mui.poppicker.js"></script> 
+		<script src="../../../js/city.data.js"></script>
+		<script src="../../../js/city.data-3.js"></script>
+		
+		<script src="../../../js/public.js"></script>
+		<style>
+			.mui-content,body{
+				background: #f9f9f9;
+			}
+			.mui-input-group:before,.mui-input-group .mui-input-row:after,.mui-input-group:after{
+				height: 0;
+			}
+			.mui-input-row {
+				margin: 0.75rem 0.75rem;
+				border-bottom: 1px solid #c8c7cc;
+				margin-bottom: 0.5rem;
+				background: #fff;
+			}
+			
+			.mui-content{
+				/* margin-top: 5rem; */
+			}
+			.btn-sure{
+				margin: 4rem 2rem 1rem;
+				background: #ab956c;
+				font-size: 0.75rem;
+				color: #fff;
+				text-align: center;
+				line-height: 2rem;
+				border-radius: 5px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">编辑地址</h1>
+		</header>
+		<div class="mui-content">
+			<form class="mui-input-group">
+				<div class="mui-input-row">
+				<input type="text" class="mui-input-clear name" maxlength="10" placeholder="收件人">
+				</div>
+				<div class="mui-input-row">
+					<input type="text" maxlength="11" class="mui-input-clear phone" placeholder="手机号">
+				</div>
+				<div class="mui-input-row qu">
+					<input id='cityPick' type="text" readonly  placeholder="省份、城市、区县">
+				</div>
+				<div class="mui-input-row">
+					<input type="text" class="mui-input-clear adressInfo" placeholder="详细地址, 如街道、楼盘号等">
+				</div>
+			</form>
+			<div class="mui-input-row mui-checkbox">
+			  <input class="check-address" name="checkbox1"  value="Item 1" type="checkbox">
+			  <label>设为默认地址</label>
+			</div>
+			<div class='btn-sure'>保存</div>
+		</div>
+		
+		<script type="text/javascript">
+			mui.init()
+			document.addEventListener('plusready',function(){
+				var _getParam = function(obj, param) {
+					return obj[param] || '';
+				};
+				var self = plus.webview.currentWebview();
+				console.log('self'+self.addressEdit)
+				if(self.addressEdit){
+					ajaxGet(addressSee,{
+						id:self.addressEdit,
+					},function(res){
+						console.log('地址详情'+res)
+						if(res.errno ==0){
+							$('.name').val(res.data.name);
+							$('#cityPick').val(res.data.provinceName+'-'+res.data.cityName+'-'+res.data.areaName)
+							$('.adressInfo').val(res.data.address)
+							$('.phone').val(res.data.mobile)
+							if(res.data.isDefault==true){
+								$('.check-address').prop('checked','checked')
+								
+							}
+							plus.nativeUI.closeWaiting();
+						}
+						
+					})
+					
+				}
+				mui('body').on('tap', '.btn-sure', function(e) {
+					if($('.check-address').prop('checked')==true){
+						var isDefault = 1
+					}else{
+						var isDefault = 0
+					}
+					
+					$('input').blur();
+					if(!$('.name').val()){
+						mui.toast('请输入收件人')
+					}else if(!$('.phone').val()){
+						mui.toast('请输入手机号')
+					}else if(isPhone($('.phone').val())==false){
+						
+					}else if(!$('#cityPick').val()){
+						mui.toast('请选择省、市、区')
+					}else if(!$('.adressInfo').val()){
+						mui.toast('请输入详细地址')
+					}else{
+						if(self.addressEdit){
+							var addressid=self.addressEdit
+						}else{
+							var addressid = ''
+						
+						}
+						ajaxPost(host+'wx/address/save?pca='+$('#cityPick').val(),{
+							id:addressid,
+							name:$('.name').val(),
+							userId:userInfo.userid,
+							provinceId:0,
+							cityId:0,
+							areaId:0,
+							address:$('.adressInfo').val(),
+							mobile:$('.phone').val(),
+							isDefault:isDefault
+						},function(res){
+							if(res.errno==0){
+								mui.toast('保存成功')
+								var self = plus.webview.currentWebview();
+								var opener = self.opener();
+								//此句调用父页面js
+								opener.evalJS('parentGet()');
+								self.close()
+							}
+							
+						})
+					}	
+				})
+			})
+				
+			
+				//地址pick/
+				var cityPicker3 = new mui.PopPicker({
+					layer: 3
+				});
+				cityPicker3.setData(cityData3);
+				var showCityPickerButton = document.getElementById('cityPick');
+				
+				showCityPickerButton.addEventListener('tap', function(event) {
+					
+					cityPicker3.show(function(items) {
+						console.log(items)
+						$('#cityPick').val((items[0] || {}).text+ "-"+(items[1] || {}).text+"-" + (items[2] || {}).text)
+						//返回 false 可以阻止选择框的关闭
+						//return false;
+					});
+				});
+			
+			
+			
+		</script>
+		
+		
+	</body>
+
+</html>

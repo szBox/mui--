@@ -1,0 +1,346 @@
+
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>我的订单</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../../../css/commom.css"/>
+		
+		<script src="../../../js/mui.min.js"></script>
+		<script src="../../../js/jquery-2.1.0.js"></script>
+		<script src="../../../js/rem.js"></script>
+		<script src="../../../js/ajax.js"></script>
+		<script src="../../../js/mui.pullToRefresh.js"></script>
+		<script src="../../../js/mui.pullToRefresh.material.js"></script>
+		<script src="../../../js/public.js"></script>
+		
+		<style>
+			.mui-content,body{
+				background: #F4F4F4;
+				border: none;
+				touch-action: none;
+				/* background: #2AC845; */
+			}
+			.kidNav{
+				box-shadow:0 0 0 transparent;
+				
+			}
+			.kidNav a.mui-active{
+				border-bottom: 2px solid #ab956c;
+			}
+			#slider-y{
+
+			}
+			#slider-y>div{
+				height: 100%;
+			}
+			
+			.ul-list li{
+				background: #fff;
+				margin: 0.5rem 0;
+				border-radius: 5px;
+				padding: 0.75rem;
+			}
+			.status{
+				flex: 1;
+				text-align: right;
+			}
+			.order-body-div img{
+				width: 4.5rem !important;
+				height:4.5rem !important;
+				border: 1px solid #eee;
+			}
+			.order-body-div>div{
+				margin-left: 0.75rem;
+			}
+			.order-body-div>div h1{
+				font-size: 0.8rem;
+				-webkit-line-clamp: 2;
+			}
+			.bianhao{
+				-webkit-line-clamp: 1;
+				margin-right: 1rem;
+				width: 65%;
+			}
+			.order-body-div{
+				border-bottom: 1px solid #eee;
+				border-top: 1px solid #eee;
+				margin: 0.5rem 0;
+				padding: 0.75rem 0;
+			}
+			.no-data{
+				
+				position: fixed;
+				top: 7rem;
+				width: 100%;
+				text-align: center;
+			}
+			.no-data img{
+				width: 6.5rem !important;
+				height: 6.5rem !important;
+			}
+			.no-data p{
+				color: #999;
+				font-size: 0.75rem;
+			}
+			.mui-slider .mui-segmented-control.mui-segmented-control-inverted~.mui-slider-group .mui-slider-item{
+				border: none;
+			}
+			#slider-x{
+				height: 2.2rem;
+				
+				border-bottom: 1px solid #eee;
+			}
+			#slider-x>div{
+				height: 2.2rem;
+				width: 100%;
+				display: flex;
+			}
+			#slider-x>div>a{
+				height: 2.2rem;
+				width: 20%;
+				padding: 0;
+				line-height: 2rem;
+			}
+			#slider-x>div>a.mui-active{
+				color: #ab956c;
+				font-weight: bold;
+				border-bottom: 3px solid #ab956c;
+			}
+			#slider-y{
+				
+				padding-bottom: 4.5rem;
+			}
+		
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">我的订单</h1>
+		</header>
+		
+		<div class="mui-content">
+			<!-- mui-slider mui-fullscreen -->
+		<div id="slider" class="">
+			<div id="slider-x" class="mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
+				<div class="mui-scroll">
+					<a class="mui-control-item"  id='order0' href='#item0'>
+						<span class="mui-tab-label">全部<i></i></span>
+					</a>
+					<a class="mui-control-item"  id="order1" href='#item1'>
+						<span class="mui-tab-label">待付款<i></i></span>
+					</a>
+					<a class="mui-control-item"  id="order2" href='#item2'>
+						<span class="mui-tab-label">待发货<i></i></span>
+					</a>
+					<a class="mui-control-item"  id="order3" href='#item3'>
+						<span class="mui-tab-label">待收货<i></i></span>
+					</a>
+					<a class="mui-control-item"  id="order4" href='#item4'>
+						<span class="mui-tab-label">待评价<i></i></span>
+					</a>
+				</div>
+			</div>
+
+			<div id='slider-y' class="mui-slider-group">
+				<div id="item0" class="mui-slider-item mui-control-content">
+					<div class="mui-scroll-wrapper">
+						<div class="mui-scroll">
+							<ul class="ul-list mui-table-view mui-table-view-chevron">
+						
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div id="item1" class="mui-slider-item mui-control-content">
+					<div class="mui-scroll-wrapper">
+						<div class="mui-scroll">
+							<ul class="ul-list mui-table-view mui-table-view-chevron">
+							
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div id="item2" class="mui-slider-item mui-control-content">
+					<div class="mui-scroll-wrapper">
+						<div class="mui-scroll">
+							<ul class="ul-list mui-table-view mui-table-view-chevron">
+						
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div id="item3" class="mui-slider-item mui-control-content">
+					<div class="mui-scroll-wrapper">
+						<div class="mui-scroll">
+							<ul class="ul-list mui-table-view mui-table-view-chevron">
+						
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div id="item4" class="mui-slider-item mui-control-content">
+					<div class="mui-scroll-wrapper">
+						<div class="mui-scroll">
+							<ul class="ul-list mui-table-view mui-table-view-chevron">
+							
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+	
+		
+		
+		</div>
+		</div>
+		<script type="text/javascript">
+			mui.init({
+				options : {
+				 scrollY: true, //是否竖向滚动
+				 scrollX: true, //是否横向滚动
+				 startX: 0, //初始化时滚动至x
+				 startY: 0, //初始化时滚动至y
+				 indicators: false, //是否显示滚动条
+				 deceleration:0.0006, //阻尼系数,系数越小滑动越灵敏
+				 bounce: true //是否启用回弹
+				},
+			})
+			
+			$('body').height($(document).height())
+			$('#slider-y').height($(document).height()-$('.ui-bar-nav').height()-$('.mui-bar-tab').height()-55)
+			var obj = [{type:0,page:1,size:10,list:'',counts:'',pages:''},
+					{type:1,page:1,size:10,list:'',counts:'',pages:''},
+					{type:2,page:1,size:10,list:'',counts:'',pages:''},
+					{type:3,page:1,size:10,list:'',counts:'',pages:''},
+					{type:4,page:1,size:10,list:'',counts:'',pages:''}
+				]
+			document.addEventListener('plusready',function(){
+				var self = plus.webview.currentWebview();
+// 				var self = {
+// 					orderActive:2
+// 				}
+				//mui('.mui-slider').slider().gotoItem(self.orderActive);
+				$('#order'+self.orderActive).addClass('mui-active')
+				$('#item'+self.orderActive).addClass('mui-active')
+				
+				for(var i=0; i<obj.length; i++){
+					list(obj[i])
+					mui('.mui-scroll-wrapper').scroll() 
+					mui(".mui-slider").slider();
+				}
+			
+				myPull(obj)
+				
+				mui('body').on('tap','.ul-list li',function(){
+					var orderId = $(this).attr('order-id');
+					plus.nativeUI.showWaiting();
+					openView("./orderInfo.html","orderInfo.page",{orderId:orderId,type:0})
+				})
+			})
+			
+			
+			function list(obj){
+				ajaxGet(orderList,{showType:obj.type,page:obj.page,size:obj.size},function(res){
+						//服务器返回响应，根据响应结果，分析是否登录成功；
+					// console.log('列表--',res)
+					if(res.data.data.length>0){
+						for(var i=0; i<res.data.data.length; i++){
+							
+							obj.list+=`<li order-id='${res.data.data[i].id}'>
+										<h1 class="myflex">
+											<span class="ellipsis bianhao">订单编号：${res.data.data[i].orderSn}</span>
+											<i class="status">${res.data.data[i].orderStatusText}</i>
+										</h1>`
+										for(var j=0; j<res.data.data[i].goodsList.length;j++){
+											obj.list+=`<div class="myflex order-body-div">
+													<img src="${res.data.data[i].goodsList[j].picUrl}" >
+													<div>
+														<h1 class="ellipsis">${res.data.data[i].goodsList[j].goodsName}</h1>
+														<p>共${res.data.data[i].goodsList[j].number}件商品</p>
+													</div>
+												</div>`
+										}
+										obj.list+=`<h3>实付：￥${res.data.data[i].actualPrice}</h3>
+							</li>`
+						}
+						obj.counts=res.data.count;
+						obj.pages=Math.ceil(res.data.count/obj.size);;
+						console.log(obj.type,)
+						console.log($('#item'+obj.type).attr('class'))
+						$('#item'+obj.type).find('ul').html(obj.list)
+						plus.nativeUI.closeWaiting();
+					}else{
+						var noData = `<div class='no-data no-car'>
+										<img src="../../../img/car_nodata.png" >
+										<p>还没有订单呢</p>
+									</div>`
+						$('#item'+obj.type).html(noData)
+						plus.nativeUI.closeWaiting();
+					}
+					
+						
+				
+					console.log('l;;;',obj)
+			    
+				})
+			}
+			
+			function myPull(obj){
+				//循环初始化所有下拉刷新，上拉加载。
+				$.each(document.querySelectorAll('#slider-y  .mui-scroll'), function(index, pullRefreshEl) {
+					mui(pullRefreshEl).pullToRefresh({
+						down: {
+							callback: function() {
+								var self = this;
+								setTimeout(function() {
+									console.log('obj',obj)
+									obj[index].page=1;
+									obj[index].list='';
+									$('#item'+obj[index].id).find('ul li').remove()
+									list(obj[index])
+									self.endPullDownToRefresh();
+								}, 1500);
+							}
+						},
+						up: {
+							callback: function() {
+								var self = this;
+								console.log('self',self,index)
+								setTimeout(function() {
+									console.log('obj',obj[index])
+									obj[index].page++;
+									if(obj[index].page<=obj[index].pages){
+										list(obj[index])
+										self.endPullUpToRefresh();
+									}else{
+										 self.endPullUpToRefresh(true);
+									}
+									
+								}, 1500);
+							}
+						}
+					});
+				});
+			
+				
+			}
+			
+			function order2Active(){
+				list(obj[0])
+				list(obj[1])
+				list(obj[2])
+				$('#order2,#item2').addClass('mui-active')
+				$('#order1,#item1,#order0,#item0').removeClass('mui-active')
+			}
+		</script>
+		
+		
+	</body>
+
+</html>

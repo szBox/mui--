@@ -1,0 +1,362 @@
+
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>订单详情</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../../../css/commom.css"/>
+		
+		<script src="../../../js/mui.min.js"></script>
+		<script src="../../../js/jquery-2.1.0.js"></script>
+		<script src="../../../js/rem.js"></script>
+		<script src="../../../js/ajax.js"></script>
+		<script src="../../../js/mui.pullToRefresh.js"></script>	
+		<script src="../../../js/mui.pullToRefresh.material.js"></script>
+		<script src="../../../js/public.js"></script>
+		
+		<style>
+			.mui-content,body,.ul-list{
+				background: #F4F4F4;
+				touch-action: none;
+			}
+			#slider-y>div{
+				height: 100%;
+			}
+			.mui-table-view:before,.mui-table-view:after{
+				height: 0;
+			}
+			.ul-list li{
+				background: #fff;
+				margin: 0.5rem 0;
+				border-radius: 5px;
+				padding: 0.75rem;
+			}
+			.ul-list li:last-child{
+				margin-bottom: 0;
+			}
+			.status{
+				flex: 1;
+				text-align: right;
+			}
+			.order-body-div {
+				position: relative;
+			}
+			.order-body-div .bb{
+				position: absolute;
+				right: 0;
+				bottom: 0;
+				padding: 2px 6px;
+				border-radius: 3px;
+				color: #fff;
+				font-size: 0.65rem;
+				text-align: center;
+				background: #b4282d;
+			}
+			.order-body-div img{
+				width: 4.5rem;
+				height:4.5rem;
+				border: 1px solid #eee;
+			}
+			.order-body-div>div{
+				margin-left: 0.75rem;
+			}
+			.order-body-div>div h1{
+				font-size: 0.8rem;
+				-webkit-line-clamp: 2;
+			}
+			.bianhao{
+				-webkit-line-clamp: 1;
+				margin-right: 1rem;
+				width: 65%;
+			}
+			.order-box{
+				padding: 0.75rem;
+				background: #fff;
+				margin-bottom: 0.5rem;
+			}
+			.order-box>div{
+				padding: 0.5rem 0 0;
+				border-top: 1px solid #eee;
+			}
+			.order-box>h3{
+				font-size: 0.75rem;
+				color: #666;
+				margin: 0.75rem 0;
+			}
+			.order-body-div{
+				border-top: 1px solid #eee;
+				margin: 0.5rem 0;
+				padding: 0.75rem 0;
+			}
+			.order-action{
+				padding: 5px 8px;
+				border-radius: 3px;
+				color: #fff;
+				text-align: center;
+				background: #b4282d;
+			}
+			.address-box{
+				background: #fff;
+				padding:0 0.75rem 0.75rem;
+			}
+			.address-money-div{
+				border-bottom: 1px solid #eee;
+				border-top: 1px solid #eee;
+				padding: 0.4rem 0;
+				margin: 0.4rem 0;
+			}
+			.address-box >div{
+				color: #555;
+			}
+			.address-box >div span{
+				display: inline-block;
+				width: 4rem;
+				font-size: 0.7rem;
+				margin-right: 1rem;
+			}
+			.address-info{
+				-webkit-line-clamp: 2;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">订单详情</h1>
+		</header>
+		<div class="mui-content">
+			<div class="mui-scroll-wrapper" style="margin-top: 44px;">
+				<div class="mui-scroll">
+					<div class="order-box">
+						
+					</div>
+					
+					<div class="good-box">
+						<ul class="ul-list mui-table-view mui-table-view-chevron">
+							
+						</ul>
+					</div>
+					
+					<div class="address-box">
+						
+					</div>
+				</div>
+				
+			</div>
+		    
+		</div>
+		<script type="text/javascript">
+			mui.init(
+			    options = {
+			    scrollY: true, //是否竖向滚动
+				startY: 0, //初始化时滚动至y
+				indicators: false, //是否显示滚动条
+				deceleration:0.0006, //阻尼系数,系数越小滑动越灵敏
+				bounce: true //是否启用回弹
+				}
+			)
+		
+			mui('.mui-scroll-wrapper').scroll({
+				indicators:false,
+				deceleration: 0.0006,//flick 减速系数，系数越大，滚动速度越慢，滚动距离越小，默认值0.0006
+			})
+			
+			var self = null;
+			document.addEventListener('plusready',function(){
+				self = plus.webview.currentWebview();
+				
+			
+// 			var self = {
+// 				orderId:10
+// 			}
+			var obj = {
+				page:1,
+				size:10,
+			};
+			getList()
+			var wxChannel = null; // 微信支付    
+			var aliChannel = null; // 支付宝支付    
+			var channel = null;   //支付通道 
+			// 获取支付通道    
+			plus.payment.getChannels(function(channels){
+			for (var i in channels) {   
+					if (channels[i].id == "wxpay") {   
+						 wxChannel=channels[i];    
+					}else{   
+						aliChannel=channels[i];    
+					}   
+				}       
+			},function(e){    
+			 alert("获取支付通道失败："+e.message);    
+			});   
+			
+			// 2. 发起支付请求    
+			function pay(id,server,payOrderId){
+				// 从服务器请求支付订单    
+				var PAYSERVER='';    
+					if(id=='alipay'){    
+					PAYSERVER=server;    
+					channel = aliChannel;    
+				}else if(id=='wxpay'){    
+					PAYSERVER=server;    
+					channel = wxChannel;    
+				}else{    
+					plus.nativeUI.alert("不支持此支付通道！",null,"捐赠");    
+					return;    
+				}
+				var token = localStorage.getItem('token');
+				var xhr=new XMLHttpRequest();
+				xhr.onreadystatechange=function(){
+					switch(xhr.readyState){    
+						case 4:    
+						if(xhr.status==200){
+							var res=JSON.parse(xhr.responseText);
+							console.log(JSON.stringify(res.data))
+							plus.payment.request(channel,JSON.stringify(res.data),function(result){
+								plus.nativeUI.showWaiting();
+								setTimeout(function(){
+									plus.nativeUI.closeWaiting();
+									plus.webview.getWebviewById('orderList2.page').reload(true)
+									self.close();//关闭B 
+									/*var self = plus.webview.currentWebview();
+									var opener = self.opener();
+									//此句调用父页面js
+									opener.evalJS('order2Active()');
+									self.close()*/
+								},300)  
+							},function(error){  
+								plus.nativeUI.showWaiting();
+								setTimeout(function(){
+									plus.nativeUI.closeWaiting();
+									mui.alert('支付失败','蔚来空间','我知道了',function (e) {
+									
+									},'div')
+								},300)     
+							});    
+						}else{    
+							alert("获取订单信息失败！");    
+						}    
+						break;    
+						default:    
+						break;    
+					}    
+				}    
+				xhr.open('GET',PAYSERVER);  
+				xhr.setRequestHeader('X-Litemall-Token',token);  
+				xhr.send();    
+			
+			}   
+			function getList(){
+				ajaxGet(orderInfo,{orderId:self.orderId},function(res){
+					console.log(res)
+					var list = ''
+					if(res.errno == 0){
+						plus.nativeUI.closeWaiting();
+						var statusText = res.data.orderInfo.orderStatusText;
+						if(statusText=='已付款'||statusText=='已取消(系统)'||statusText=='已取消'){
+							var statusBtn = '';
+							var statusBB = '';
+						}else if(statusText=='未付款'){
+							var statusBtn = `<div order-id='${res.data.orderInfo.id}' class='order-action btns-quxiao'>取消订单</div>
+							<div order-id='${res.data.orderInfo.id}' style="margin-left:0.8rem" class='order-action go-fukuan'>去付款</div>`
+							var statusBB = '';
+						}else if(statusText=='已发货'||statusText=='已发货(系统)'){
+							var statusBtn = `<div class='order-action btns-shou'>确认收货</div>`
+							var statusBB = '';
+						}
+						else if(statusText=='已收货'||statusText=='已发货(系统)'){
+							var statusBtn = `<div class='order-action btns-close'>删除订单</div>`
+							var statusBB = `<div class='bb'>去评价</div>`
+						}
+						
+						var order = `<h3>下单时间：${res.data.orderInfo.addTime}</h3>
+								<h3>订单编号：${res.data.orderInfo.orderSn}</h3>
+								<div class="myflex">
+									<div style="flex: 1;">实付：<span style="color: #b4282d;">￥${res.data.orderInfo.actualPrice}元</span></div>
+									${statusBtn}
+								</div>`
+						var address = `<div><span>${res.data.orderInfo.consignee}</span>${res.data.orderInfo.mobile}</div>
+									<div class="ellipsis address-info">
+									${res.data.orderInfo.address}
+									</div>
+									<div class="address-money-div">
+										<div><span>运费：</span>￥${res.data.orderInfo.freightPrice}</div>
+										<div><span>商品合计：</span>￥${res.data.orderInfo.goodsPrice}</div>
+									</div>
+									<div style="color: #b4282d;">
+										<span>实付：</span>￥${res.data.orderInfo.actualPrice}
+									</div>`
+						
+						for(var i=0; i<res.data.orderGoods.length; i++){
+							list+=`<li order-id='${res.data.orderGoods[i].id}'>
+									<h1 class="myflex">
+										<span class="ellipsis bianhao">商品信息</span>
+										<i class="status" style="color:#b4282d">${res.data.orderInfo.orderStatusText}</i>
+									</h1>
+									<div class="myflex order-body-div">
+										<img src="${res.data.orderGoods[i].picUrl}" >
+										<div>
+											<h1 class="ellipsis">${res.data.orderGoods[i].goodsName}</h1>
+											<h2 class="ellipsis" style='font-size:0.7rem;color:#666'>`;
+											for(var j=0;j<res.data.orderGoods[i].specifications.length;j++){
+												list+=`${res.data.orderGoods[i].specifications[j]} `
+											}
+											list+=`</h2>
+											<p>共${res.data.orderGoods[i].number}件商品</p>
+										</div>
+										${statusBB}
+									</div>
+									<h3>实付：￥${res.data.orderGoods[i].price}</h3>
+								</li>`
+						}
+						$('.order-box').html(order);
+						$('.ul-list').html(list);
+						$('.address-box').html(address)
+						
+					}
+					
+				})
+			}
+			mui('body').on('tap','.btns-close',function(){
+				//删除订单
+			})
+			.on('tap','.btns-quxiao',function(){
+				//取消订单
+				var orderId =$(this).attr('order-id')
+				var btnArray = ['是', '否'];
+				mui.confirm('确认取消？', '温馨提示', btnArray, function(e) {
+					if (e.index == 0) {
+						ajaxPost(orderQuxiao,{
+							orderId:orderId
+						},function(res){
+							console.log('res'+JSON.stringify(res))
+							if(res.errno==0){
+								//重置返回
+								plus.webview.getWebviewById('orderList2.page').reload(true)
+								self.close();//关闭B 
+							}
+						})
+						
+					} else {
+					}
+				},'div')
+			})
+			.on('tap', '.go-fukuan', function(e) {
+				var payOrderId = $(this).attr('order-id');
+				plus.nativeUI.showWaiting();
+				var WXPAYSERVER = host+'/wx/apppay/prepay?orderId='+payOrderId;
+				pay('wxpay',WXPAYSERVER,payOrderId)
+				
+			})
+			
+		})
+		</script>
+		
+		
+	</body>
+
+</html>

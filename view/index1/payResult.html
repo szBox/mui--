@@ -1,0 +1,194 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>支付结果</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../../css/commom.css"/>
+		
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/jquery-2.1.0.js"></script>
+		<script src="../../js/rem.js"></script>
+		<script src="../../js/ajax.js"></script>
+		<script src="../../js/public.js"></script>
+		
+		<style>
+			
+			.mui-content,body{
+				background: #fff;
+			}
+			
+			.payresult{
+				margin: 3rem 0 0;
+				text-align: center;
+				display: none;
+			}
+			.payresult>img{
+				width: 2.5rem;
+				height: 2.5rem;
+			}
+			.payresult>h3{
+				font-size: 0.9rem;
+				color: #b4282d;
+				margin-top: 0.5rem;
+				margin-bottom: 1.5rem;
+			}
+			.payresult>p{
+				font-size: 0.65rem;
+				color: #333;
+			}
+			.payresult>p span{
+				font-size: 0.8rem;
+			}
+			.payresult>div span{
+				display: inline-block;
+				width: 5rem;
+				font-size: 0.75rem;
+				height: 1.8rem;
+				margin: 1.5rem 0.5rem;
+				line-height: 1.8rem;
+				border: 1px solid #868686;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">支付结果</h1>
+		</header>
+		
+		<div class="mui-content">
+			<div class="payresult pay-no">
+				<img src="../../img/pay-no.png" alt="">
+				<h3>支付失败</h3>
+				<p>请在 <span>半小时</span> 内完成支付</p>
+				<p>否则订单将会被系统取消</p>
+				<div>
+					<span class='see-no'>查看订单</span>
+					<span class='go-fukuan'>重新付款</span>
+				</div>
+			</div>
+			
+			<div class="payresult pay-yes">
+				<img src="../../img/pay-yes.png" >
+				<h3 style="color: #333;">支付成功</h3>
+				<div>
+					<span class='see-yes' style="margin: 0 0.5rem;">查看订单</span>
+					<span class='go-buy' style="margin: 0 0.5rem;">继续逛</span>
+				</div>
+			</div>
+		</div>
+		
+		
+		<script type="text/javascript">
+			mui.init()
+			var self = null;
+			document.addEventListener('plusready',function(){
+				plus.nativeUI.closeWaiting();
+				self = plus.webview.currentWebview();
+				if(self.payResult=='no'){
+					$('.pay-no').show()
+				}else{
+					$('.pay-yes').show()
+				}
+				
+				var wxChannel = null; // 微信支付    
+				var aliChannel = null; // 支付宝支付    
+				var channel = null;   //支付通道 
+				// 获取支付通道    
+				plus.payment.getChannels(function(channels){
+				for (var i in channels) {   
+						if (channels[i].id == "wxpay") {   
+							 wxChannel=channels[i];    
+						}else{   
+							aliChannel=channels[i];    
+						}   
+					}       
+				},function(e){    
+				 alert("获取支付通道失败："+e.message);    
+				});   
+				
+				// 2. 发起支付请求    
+				function pay(id,server,payOrderId){
+					// 从服务器请求支付订单    
+					var PAYSERVER='';    
+						if(id=='alipay'){    
+						PAYSERVER=server;    
+						channel = aliChannel;    
+					}else if(id=='wxpay'){    
+						PAYSERVER=server;    
+						channel = wxChannel;    
+					}else{    
+						plus.nativeUI.alert("不支持此支付通道！",null,"捐赠");    
+						return;    
+					}
+					var token = localStorage.getItem('token');
+					var xhr=new XMLHttpRequest();
+					xhr.onreadystatechange=function(){
+						switch(xhr.readyState){    
+							case 4:    
+							if(xhr.status==200){
+								var res=JSON.parse(xhr.responseText);
+								console.log(JSON.stringify(res.data))
+								plus.payment.request(channel,JSON.stringify(res.data),function(result){
+									plus.nativeUI.showWaiting();
+									setTimeout(function(){
+										plus.nativeUI.closeWaiting();
+										$('.pay-no').hide()
+										$('.pay-yes').show()
+									},300)  
+								},function(error){  
+									plus.nativeUI.showWaiting();
+									openView('./payResult.html','payResult',{'payResult':'no','payOrderId':payOrderId});
+									setTimeout(function(){
+										plus.nativeUI.closeWaiting();
+										$('.pay-no').show()
+										$('.pay-yes').hide()
+									},300)     
+								});    
+							}else{    
+								alert("获取订单信息失败！");    
+							}    
+							break;    
+							default:    
+							break;    
+						}    
+					}    
+					xhr.open('GET',PAYSERVER);  
+					xhr.setRequestHeader('X-Litemall-Token',token);  
+					xhr.send();    
+				
+				}   
+			mui('body').on('tap', '.see-yes', function(e) {
+				openView("../index3/order/orderList2.html","orderList2.page",{orderActive:2})
+			})
+			.on('tap', '.see-no', function(e) {
+				openView("../index3/order/orderList2.html","orderList2.page",{orderActive:1})
+			})
+			.on('tap', '.go-buy', function(e) {
+				setTimeout(function(){
+					plus.webview.currentWebview().close('none')
+					plus.webview.currentWebview('good_info.page').close('none')
+					plus.webview.currentWebview('good_info.page').reload(true)
+				},500) 
+				var parentPage = plus.webview.getWebviewById("index"); 
+				mui.fire(parentPage,'sub1',{pageId:'index1'});
+				mui.back()
+			})
+			.on('tap', '.go-fukuan', function(e) {
+				plus.nativeUI.showWaiting();
+				var WXPAYSERVER = host+'/wx/apppay/prepay?orderId='+self.payOrderId;
+				pay('wxpay',WXPAYSERVER,self.payOrderId)
+				
+			})
+		
+			})
+		</script>
+		
+		
+	</body>
+
+</html>

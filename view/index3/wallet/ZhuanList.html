@@ -1,0 +1,96 @@
+
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>提现记录</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../../../css/commom.css"/>
+		
+		<script src="../../../js/mui.min.js"></script>
+		<script src="../../../js/jquery-2.1.0.js"></script>
+		<script src="../../../js/rem.js"></script>
+		<script src="../../../js/ajax.js"></script>
+		<script src="../../../js/public.js"></script>
+		
+		<style>
+			.mui-content,body{
+				background: #F4F4F4;
+				border: none;
+				/* background: #2AC845; */
+			}
+			.kidNav{
+				box-shadow:0 0 0 transparent;
+				
+			}
+			.kidNav a.mui-active{
+				border-bottom: 2px solid #ab956c;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">转账记录</h1>
+		</header>
+		
+		<div class="mui-content">
+			<nav class="mui-bar mui-bar-tab kidNav" style="top: 47px;border: none;">
+				<div>
+					<a class="mui-tab-item mui-active" data-href="./ZhuanList-1.html">
+						<span class="mui-tab-label">转出<i></i></span>
+					</a>
+					<a class="mui-tab-item" data-href="./ZhuanList-2.html" id="bbsChannel">
+						<span class="mui-tab-label">转入<i></i></span>
+					</a>
+				</div>
+			</nav>
+			
+	
+		
+		
+	
+		</div>
+		<script type="text/javascript">
+			mui.init()
+			var subPages = ["./ZhuanList-1.html", "./ZhuanList-2.html"];
+			var subPageStyle = {
+				top: '100px',
+				bottom: '0'
+			}
+			
+			mui.plusReady(function() {
+				var self = plus.webview.currentWebview();
+				for(var i = 0; i < subPages.length; i++) {
+					var sub = plus.webview.create(subPages[i], subPages[i], subPageStyle);
+					self.append(sub);
+				}
+				plus.webview.show(subPages[0]);
+			
+				//底部切換
+				var activeTab = subPages[0];
+				var targetTab = '';
+				mui('.mui-bar-tab').on('tap', 'a', function(e) {
+					targetTab = this.dataset.href;
+					if(targetTab == activeTab) {
+						return;
+					}
+					plus.webview.show(targetTab);
+					//隐藏当前;
+					plus.webview.hide(activeTab);
+					//更改当前活跃的选项卡
+					activeTab = targetTab;
+				});
+			
+			
+			})
+			
+		</script>
+		
+		
+	</body>
+
+</html>

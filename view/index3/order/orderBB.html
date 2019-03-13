@@ -1,0 +1,167 @@
+
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>评价</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../../../css/commom.css"/>
+		
+		<script src="../../../js/mui.min.js"></script>
+		<script src="../../../js/jquery-2.1.0.js"></script>
+		<script src="../../../js/rem.js"></script>
+		<script src="../../../js/ajax.js"></script>
+		<script src="../../../js/public.js"></script>
+		
+		<style>
+			.mui-content,body,.ul-list{
+				background: #F4F4F4;
+				touch-action: none;
+			}
+			.good-box{
+				background: #fff;
+				border-radius: 5px;
+				padding: 0.75rem;
+			}
+			
+			.good-box img{
+				width: 4.5rem;
+				height: 4.5rem;
+				margin-right: 0.75rem;
+				border: 1px solid #eee;
+			}
+			.star-box{
+				background: #fff;
+				padding: 0.75rem;
+			}
+			.star-box img{
+				width: 1.2rem;
+			}
+			.star-box>div{
+				flex: 1;
+			}
+			.star-box>i{
+				flex: 1;
+			
+			}
+			.bb-div{
+				background: #fff;
+				position: relative;
+				padding-bottom: 2rem;
+				
+			}
+			.bb-div textarea{
+				border: 1px solid #eee;
+				border-bottom: 0;
+			}
+			.text-max{
+				position: absolute;
+				bottom: 2rem;
+				right: 0.75rem;
+			}
+			
+			.sure{
+				background:#AB956D;
+				color:#fff;
+				border-radius:1rem;
+				line-height:2rem;
+				font-size:0.75rem;
+				text-align: center;
+				margin:2rem 2rem 0;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">订单详情</h1>
+		</header>
+		<div class="mui-content">
+			<div class="good-box myflex">
+				<img src="http://yanxuan.nosdn.127.net/3bd73b7279a83d1cbb50c0e45778e6d6.png">
+				<div>
+					<h1 class="ellipsis">天然硅胶宠物除毛按摩刷</h1>
+					<h2 class="ellipsis" style="font-size:0.7rem;color:#666">标准 红 大 </h2>
+					<p>共1件商品</p>
+				</div>				
+			</div>
+			<div class="star-box myflex">
+				<span>评分</span>
+				<div>
+					<img class="icon-star" star-type='on' src="../../../img/icon_collect_checked.png" >
+					<img class="icon-star" star-type='on' src="../../../img/icon_collect_checked.png" >
+					<img class="icon-star" star-type='on' src="../../../img/icon_collect_checked.png" >
+					<img class="icon-star" star-type='on' src="../../../img/icon_collect_checked.png" >
+					<img class="icon-star" star-type='on' src="../../../img/icon_collect_checked.png" >
+					
+				</div>
+				<i class="star-text">十分满意</i>
+			</div>
+			<div class="bb-div">
+				<textarea class='bbInput' maxlength="120" rows="6" placeholder="留言经过筛选后,对所有人可见"></textarea>
+				<p class="text-max">
+					<span>0</span>/120
+				</p>
+			</div>
+			
+			<div class="sure">发表</div>
+		    
+		</div>
+		<script type="text/javascript">
+			mui.init()
+
+			var self = null;
+			document.addEventListener('plusready',function(){
+				self = plus.webview.currentWebview();
+				var obj = {
+					
+				};
+				//重置返回
+				var old_back = mui.back;
+				mui.back = function() {
+					var opener = self.opener();
+					//此句调用父页面js
+					opener.evalJS("getList('"+obj+"')");
+					self.close()
+				}
+				
+			})
+			var self = {
+				orderId:8
+			}
+			mui('body').on('input','.bbInput',function(){
+				console.log($(this).val())
+				$('.text-max span').html($(this).val().length)
+			})
+			.on('tap','.star-box .icon-star',function(){
+				console.log($(this).index())
+				var index = $(this).index();
+				var all = $('.star-box img').length;
+				if(index==0){
+					$('.star-text').html('很差')
+				}else if(index==1){
+					$('.star-text').html('不太满意')
+				}else if(index==2){
+					$('.star-text').html('满意')
+				}else if(index==3){
+					$('.star-text').html('比较满意')
+				}else if(index==4){
+					$('.star-text').html('十分满意')
+				}
+				$(this).attr('star-type','on')
+				$(this).prevAll().attr('star-type','on')
+				$(this).nextAll().attr('star-type','off')
+				$(this).nextAll().attr('src','../../../img/icon_collect.png')
+				$(this).prevAll().attr('src','../../../img/icon_checked.png')
+				
+			})
+
+		</script>
+		
+		
+	</body>
+
+</html>

@@ -1,0 +1,522 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>购物车</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/commom.css">
+	
+		<script src="../../js/jquery-2.1.0.js"></script>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/rem.js"></script>
+		
+		<script src="../../js/ajax.js"></script>
+		<script src="../../js/mui.pullToRefresh.js"></script>
+		<script src="../../js/mui.pullToRefresh.material.js"></script>
+		<script src="../../js/public.js"></script>
+		
+		<script>
+		
+		</script>
+		
+		<style>
+			body{
+				touch-action: none;
+			}
+			.mui-content{
+				padding-bottom: 2.5rem;
+			}
+			.no-data{
+				display: none;
+				position: fixed;
+				top: 7rem;
+				width: 100%;
+				text-align: center;
+			}
+			.no-data img{
+				width: 6.5rem;
+				height: 6.5rem;
+			}
+			.no-data p{
+				color: #999;
+				font-size: 0.75rem;
+			}
+			.no-login div{
+				margin:0.75rem 0.75rem 0;
+				background: #A9A9A9;
+				color: #fff;
+				font-size: 0.75rem;
+				text-align:  center;
+				line-height: 2.2rem;
+				border-radius: 1rem;
+			}
+			.mui-checkbox{
+				width: 1.2rem;
+				height: 1.2rem;
+			}
+			.mui-checkbox.mui-left input[type=checkbox]{
+				left: 0;
+			}
+			.mui-checkbox input[type=checkbox]{
+				top: 0;
+				right: 0;
+				width: 1.2rem;
+				height: 1.2rem;
+			}
+			.car-box{
+				background: #fff;
+				margin-bottom: 2.5rem;
+			}
+			.car-list{
+				
+			}
+			.car-list li{
+				padding: 0.75rem;
+				border-bottom: 1px solid #f4f4f4;
+				position: relative;
+			}
+			.car-list li h3{
+				margin: 0;
+			}
+			.car-list li img{
+				width: 3rem;
+				height: 3rem;
+				margin-right: 0.3rem;
+				margin-left: 0.2rem;
+			}
+			.car-list li .good-div{
+				flex: 1;
+				margin-right: 1rem;
+			}
+			.car-list li>p{
+				position: absolute;
+				right: 0.75rem;
+				top: 0.75rem;
+				color: #333;
+			}
+			.good-name{
+				-webkit-line-clamp: 2;
+				font-size: 0.8rem;
+				line-height: 0.8rem;
+			}
+			
+			.my-action-fixed{
+				border:1px solid #f4f4f4;
+				position: fixed;
+				bottom: 0;
+				z-index: 12;
+				height: 2.5rem;
+				width: 100%;
+				background: #fff;
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				padding: 0 0.75rem;
+			}
+			.my-action-fixed .car-action,.my-action-fixed .car-action2{
+				flex: 1;
+				line-height: 1.8rem;
+				color: #fff;
+				text-align: center;
+				border-radius: 1rem;
+				background: #AB956D;
+			}
+			.my-action-fixed .car-action2{
+				background: #9A9BA1;
+				margin-left: 0.5rem;
+			}
+			.mui-numbox{
+				display: none;
+				height: 1.5rem;
+				position: absolute;
+				right: 0.75rem;
+				bottom: 0.45rem;
+			}
+			.my-action-fixed .car-action2.buy{
+				background: #B4282D;
+			}
+			
+			.car-box,.car-data-what{
+				display: none;
+			}
+			.car-box{
+				margin-top: 3px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content" style="margin-top: 8px;">
+			<div class='no-data no-car'>
+				<img src="../../img/car_nodata.png" >
+				<p>去添加点什么吧</p>
+			</div>
+			<div class='no-data no-login'>
+				<img src="../../img/car_nodata.png" >
+				<p>还没有登录</p>
+				<div class="go-login">去登录</div>
+			</div>
+			
+			<div class="car-box mui-scroll-wrapper">
+				<ul class="car-list mui-scroll">
+				
+					
+				</ul>
+			</div>
+		</div>	
+		
+		<div class='car-data-what'>
+			<div class="my-action-fixed ">
+				<div class="mui-input-row mui-checkbox mui-left">
+				  <input class="check-all" checked-all="true" name="checkbox1" value="Item 1" type="checkbox">
+				</div>
+				<div style="width: 3rem; margin: 0 0.3rem;" class="car-all">
+					<span>全选(<i class="all-num">10</i>)</span>
+				</div>
+				<div style="width: 5rem;" class="car-money">
+					<span>￥<i>20</i></span>
+				</div>
+				<div class="car-action edit">编辑</div>
+				<div class='car-action2 buy'>下单</div>
+			</div>
+		</div>
+		
+		
+		<script type="text/javascript">
+
+			mui.init(
+			    options = {
+			    scrollY: true, //是否竖向滚动
+				startY: 0, //初始化时滚动至y
+				indicators: false, //是否显示滚动条
+				deceleration:0.0006, //阻尼系数,系数越小滑动越灵敏
+				bounce: true //是否启用回弹
+				}
+			)
+// 			if(isLogin==false||isLogin==null){
+// 				alert('indx2'+isLogin)
+// 				openView("../auth/login.html","login.page") //
+// 			}	
+			document.addEventListener('plusready',function(){
+		
+				
+			mui('.mui-scroll-wrapper').scroll({
+				indicators:false,
+				deceleration: 0.0006,//flick 减速系数，系数越大，滚动速度越慢，滚动距离越小，默认值0.0006
+			});
+			var isLogin = localStorage.getItem('isLogin');
+			var goodids = [];
+			getAjax();
+			
+			mui('body').on('tap', '.go-login', function(e) {
+				openView("../auth/login.html","login.page") //
+			})
+			.on('tap', '.edit', function(e) {
+				/*变 编辑*/
+				$(this).html('完成')
+				$(this).addClass('sure').removeClass('edit');
+				$('.car-all').html('全选')
+				$('.car-money').html('')
+				$('.mui-numbox').show()
+				//变 删除
+				$('.car-action2').html('移除')
+				$('.car-action2').addClass('delete').removeClass('buy');
+			})
+			.on('tap', '.sure', function(e) {
+				/*变 完成*/
+				$(this).removeClass('sure').addClass('edit');
+				$(this).html('编辑')
+				
+				var numList = [],moneyList = [];
+				for(var i=0; i<$('.good-check').length; i++ ){
+					numList.push($('.good-check'+i+':checked').parents('li').find('.good-num').html())
+					moneyList.push(Number($('.good-check'+i+':checked').parents('li').find('.good-num').html() * Number($('.good-check'+i+':checked').parents('li').find('.good-money i').html())))
+				}
+				var numResult =numHe(numList);
+				var moneyResult =numHe(moneyList);
+				console.log(numList,numResult,moneyList,moneyResult)
+				$('.car-money').html(`<span>￥<i>${moneyResult}</i></span>`)
+				$('.car-all').html(`<span>全选(<i class="all-num">${numResult}</i>)</span>`)
+				
+				$('.mui-numbox').hide()
+				//变 下单
+				$('.car-action2').html('下单')
+				$('.car-action2').addClass('buy').removeClass('delete');
+				
+			})
+			.on('change','.btn-num',function(e){
+				var Tigger=$(this).parents('li');
+				Tigger.find('.good-num').html($(this).val())
+				ajaxPost(carNum,{
+					goodsId:Number(Tigger.attr('good-id')),
+					id:Number(Tigger.attr('car-id')),
+					number:Number($(this).val()),
+					productId:Number(Tigger.attr('product-id'))
+					},function(res){
+					if(res.errno == 0){
+						
+					}
+				})
+				
+			})
+			.on('change','.check-all',function(e){
+				/*全选 */
+				goodids=[]
+				for(var i=0; i<$('.good-check').length; i++){
+					goodids.push(Number($('.good-check').eq(i).parents('li').attr('product-id')));
+				}
+				if($('.car-action').hasClass('edit')){
+					
+					if($(this).prop('checked')==false){
+						$('ul.car-list').find('.good-check').prop('checked',false)
+						$('ul.car-list').find('.good-check').attr('good-checkedtype',1)
+						$(this).attr('goods-checkedtype',1)
+						checkALL(0)
+						$('.car-all').html(`<span>全选(<i class="all-num">0</i>)</span>`)
+						$('.car-money').html(`<span>￥<i>0</i></span>`)
+					}else{
+						var numList = [],moneyList=[];
+						for(var i=0; i<$('.car-list li').length; i++){
+							numList.push($('.car-list li').eq(i).find('.good-num').html())
+							moneyList.push(Number($('.car-list li').eq(i).find('.good-num').html()) * Number($('.car-list li').eq(i).find('.good-money i').html()))
+
+						}
+						var numResult =numHe(numList);
+						var moneyResult =numHe(moneyList)
+						$('ul.car-list').find('.good-check').prop('checked',true)
+						$('ul.car-list').find('.good-check').attr('good-checkedtype',0)
+						$(this).attr('goods-checkedtype',0)
+						checkALL(1)
+						$('.car-all').html(`<span>全选(<i class="all-num">${numResult}</i>)</span>`)
+						$('.car-money').html(`<span>￥<i>${moneyResult}</i></span>`)
+					}
+				}
+				if($('.car-action').hasClass('sure')){
+					if($(this).prop('checked')==false){
+						$('ul.car-list').find('.good-check').prop('checked',false)
+						$('ul.car-list').find('.good-check').attr('good-checkedtype',1)
+						$(this).attr('goods-checkedtype',1)
+						checkALL(0)
+					}else{
+						$('ul.car-list').find('.good-check').prop('checked',true)
+						$('ul.car-list').find('.good-check').attr('good-checkedtype',0)
+						$(this).attr('goods-checkedtype',0)
+						checkALL(1)
+					}
+				}
+				
+				
+				
+				
+			})	
+			.on('change','.good-check',function(e){
+				var _this =$(this);
+				var numList = [],moneyList = [];
+				ajaxPost(checked,{
+					productIds:[Number(_this.parents('li').attr('product-id'))],
+					isChecked:_this.attr('good-checkedtype')
+					},function(res){
+					if(res.errno == 0){
+						if(_this.attr('good-checkedtype')==1){
+							_this.attr('good-checkedtype',0)
+						}else{
+							_this.attr('good-checkedtype',1)
+						}
+					}
+				})
+				for(var i=0; i<$('.good-check').length; i++ ){
+					numList.push($('.good-check'+i+':checked').parents('li').find('.good-num').html())
+					moneyList.push(Number($('.good-check'+i+':checked').parents('li').find('.good-num').html() * Number($('.good-check'+i+':checked').parents('li').find('.good-money i').html())))
+			
+				}
+				var numResult =numHe(numList);
+				var moneyResult =numHe(moneyList);
+
+				console.log(numList,numResult,moneyList,moneyResult)
+				$('.car-money i').html(moneyResult)
+				$('.car-all').html(`<span>全选(<i class="all-num">${numResult}</i>)</span>`)
+				
+				if($('.good-check:checked').length == $('.good-check').length){
+					$('.check-all').prop('checked',true)
+					$('.check-all').attr('goods-checkedtype',0)
+				}else{
+					$('.check-all').attr('goods-checkedtype',1)
+					$('.check-all').prop('checked',false)
+				}
+			})
+			.on('tap','.buy',function(e){
+				var carIds = []
+				for(var i=0; i<$('.good-check:checked').length; i++){
+					carIds.push($('.good-check:checked').eq(i).parents('li').attr('car-id'))
+				}
+				console.log('ids',carIds)
+				if(carIds.length==0){
+					mui.toast('请至少选择一件商品')
+				}else{
+					ajaxGet(buying,{
+						cartId:carIds,
+						addressId:0,
+						couponId:0,
+						grouponRulesId:0
+					},function(res){
+						if(res.errno==0){
+							plus.nativeUI.showWaiting()
+							openView('../index1/good_order.html','good_order.page',{cartId:0})
+						}
+					})
+				}
+				
+			})
+			.on('tap','.delete',function(e){
+				var delIds = []
+				for(var i=0; i<$('.good-check:checked').length; i++){
+					delIds.push($('.good-check:checked').eq(i).parents('li').attr('product-id'))
+				}
+				if(delIds.length==0){
+					mui.toast('请至少选择一件商品')
+				}else{
+					var parentPage = plus.webview.getWebviewById("index");
+						//定义自定义事件openMask，通知父页面的打开遮罩蒙板
+						mui.fire(parentPage, 'openMask', {});
+						var btnArray = ['是', '否'];
+						mui.confirm('确定移除？', '温馨提示', btnArray, function(e) {
+							if (e.index == 0) {
+								mui.fire(parentPage,'closeMask', {flag:true});
+								ajaxPost(carDel,{
+									productIds:delIds
+								},function(res){
+									if(res.errno==0){
+										$.each(delIds,function(index,item){
+											$('[product-id="'+item+'"]').remove()
+										})
+										if($('.car-list li').length==0){
+											$('.no-car').show()
+											$('.car-data-what,.car-box').hide()
+										}
+										mui.toast('移除成功')
+									}
+								})
+								
+								
+							} else {
+								//定义closeMask事件，通知父页面来关闭遮罩蒙板
+								mui.fire(parentPage,  'closeMask', {flag:true});
+							}
+						},'div')
+				}	
+			})
+			
+			
+		
+			function getAjax(){
+				// alert('+++')
+				if(isLogin=='false' ||  isLogin==null){
+					$('.no-login').show()
+				}else{
+					ajaxGet(carList,{},function(res){
+						console.log('购物车LIst',res)
+						if(res.errno==501){
+							$('.no-login').show()
+							localStorage.clear()
+						}
+						if(res.errno == 0){
+							// plus.nativeUI.closeWaiting()
+							if(res.data.cartList.length>0){
+								var carL = '';
+								
+								for(var i=0; i<res.data.cartList.length; i++){
+									if(res.data.cartList[i].checked==true){
+										var Input =`<input <input good-checkedType="0" class="good-check good-check${i}" name="checkbox1" value="Item 1" type="checkbox" 
+										checked="checked">`
+									}else{
+										var Input =`<input good-checkedType="1" class="good-check good-check${i}" name="checkbox1" value="Item 1" type="checkbox">`
+									} 
+									
+									carL+=`<li class="myflex" car-id='${res.data.cartList[i].id}'  good-id='${res.data.cartList[i].goodsId}'  product-id='${res.data.cartList[i].productId}'>
+											<div class="mui-input-row mui-checkbox mui-left">
+											 ${Input}
+											</div>
+											<img class="good-img" src="${res.data.cartList[i].picUrl}" >
+											<div class='good-div'>
+												<h3 class="ellipsis good-name">${res.data.cartList[i].goodsName}</h3>
+												<h2 class="ellipsis" style="color:#999">`;
+												for(var j=0;j<res.data.cartList[i].specifications.length;j++){
+													carL+=`${res.data.cartList[i].specifications[j]} `
+												}
+												carL+=`</h2>
+												<p class='good-money' style="color: #333;margin-top: 0.3rem;">￥<i>${res.data.cartList[i].price}</i></p>
+											</div>
+											<p>
+												x<span class="good-num">${res.data.cartList[i].number}</span>
+											</p>
+											
+											<div class="mui-numbox mui-numbox${i}"  data-numbox-min='1' data-numbox-max='10'>
+											  <button class="mui-btn mui-numbox-btn-minus" type="button">-</button>
+											  <input class="mui-numbox-input btn-num" readonly type="number" />
+											  <button class="mui-btn mui-numbox-btn-plus" type="button">+</button>
+											</div>
+										</li>`
+									
+								}
+								$('.car-box ul').html(carL)
+								if($('[good-checkedType="0"]').length == $('.good-check').length){
+									$('.check-all').prop('checked',true)
+									$('.check-all').attr('goods-checkedType',0)
+								}else{
+									$('.check-all').attr('goods-checkedType',1)
+								}
+								mui('.mui-numbox').numbox();
+								
+								/*动态设置 数字输入框*/
+								for(var i=0; i<$('.btn-num').length; i++){
+									mui('.mui-numbox'+i).numbox().setValue($('.btn-num').eq(i).parents('li').find('.good-num').html())
+								}
+								
+								
+								$('.car-all i').html(res.data.cartTotal.checkedGoodsCount)
+								$('.car-money i').html(res.data.cartTotal.checkedGoodsAmount)
+								$('.car-box,.car-data-what').show()
+							}else{
+								$('.no-car').show()
+							}
+						}	
+						
+					})
+				}
+			}
+		
+			function checkALL(type){
+				ajaxPost(checked,{
+					productIds:goodids,
+					isChecked:type,
+					},function(res){
+					if(res.errno == 0){
+						if($('.check-all').attr('goods-checkedtype')==1){
+							$('ul.car-list').find('.good-check').attr('good-checkedtype',1)
+						}else{
+							$('ul.car-list').find('.good-check').attr('good-checkedtype',0)
+						}
+					}
+				})
+			}
+			})
+			
+			mui('.car-list').pullToRefresh({
+				down: {
+					callback: function() {
+						var self = this;
+						setTimeout(function() {
+							location.reload(true)
+							self.endPullDownToRefresh();
+						}, 1500);
+					}
+				},
+			});
+			
+			
+		</script>
+	</body>
+
+</html>
